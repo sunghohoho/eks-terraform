@@ -50,7 +50,7 @@ resource "aws_iam_role_policy_attachment" "eks_node-AmazonEFSCSIDriverPolicy" {
 }
 
 ################################################################################
-# 노드그룹 AMI 릴리즈
+# 노드그룹 AMI 릴리즈 no.1 , aws 공식 ami 
 ################################################################################
 # 노드그룹 ami버전 최신 릴리즈 확인
 data "aws_ssm_parameter" "eks_ami_release_version" {
@@ -92,4 +92,4 @@ resource "aws_eks_node_group" "this" {
     aws_iam_role_policy_attachment.eks_node-AmazonSSMManagedInstanceCore,
     aws_iam_role_policy_attachment.eks_node-AmazonEBSCSIDriverPolicy
   ]
-}
+} 
