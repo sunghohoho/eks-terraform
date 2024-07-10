@@ -1,10 +1,14 @@
-variable "environment" {
-  description = "환경"
+variable "cluster_name" {
+  description = ""
   type = string
-  default = "dev"
 }
 
-variable "subnetes" {
+variable "vpc_id" {
+  description = ""
+  type = string
+}
+
+variable "subnets" {
   description = "서브넷"
   type = list(string)
   default = []
@@ -13,14 +17,22 @@ variable "subnetes" {
 variable "endpoint_public_access" {
   description = "엔드포인트 유형"
   type = bool
+  default = true
+}
+
+variable "endpoint_private_access" {
+  description = "엔드포인트 유형"
+  type = bool
+  default = true
 }
 
 variable "public_access_cidrs" {
   description = ""
-  type = string
+  type = list(string)
+  default = []
 }
 
-variable "cluster_name" {
+variable "eks_version" {
   description = ""
   type = string
 }
