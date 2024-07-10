@@ -1,3 +1,6 @@
+################################################################################
+# EKS Role, SG
+################################################################################
 # EKS 클러스터 Role 생성, eks에 대한 신뢰관계 추가
 resource "aws_iam_role" "eks_service_role" {
   name = "${var.cluster_name}-cluster-service-role"
@@ -36,6 +39,9 @@ resource "aws_security_group" "this" {
   vpc_id      = var.vpc_id
 }
 
+################################################################################
+# EKS 
+################################################################################
 # eks 생성
 resource "aws_eks_cluster" "this" {
   name = "${var.cluster_name}-cluster"

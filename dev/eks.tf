@@ -1,3 +1,4 @@
+# eks 클러스터 구성
 module "eks" {
 	source = "../modules/eks"
 	cluster_name = local.project
@@ -8,6 +9,14 @@ module "eks" {
 	endpoint_public_access = true
 	public_access_cidrs = local.allow_ip
 	ec2_tags = local.tags
+
+	is_spot = false
+	nodegroup_type = ["t3.medium"]
+	nodegroup_subnets = module.vpc.public_subnet_ids
+	nodegroup_min = 1
+	nodegroup_max = 2
+	nodegroup_des = 1
+	is_pdb_ignore = true
 
 	depends_on = [ module.vpc ]
 }

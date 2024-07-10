@@ -41,3 +41,41 @@ variable "ec2_tags" {
   description = "노드그룹을 통해서 생성되는 EC2에 부여할 Tag"
   type        = map(string)
 }
+
+variable "nodegroup_min" {
+  description = "노드그룹을 통해서 생성되는 EC2에 부여할 Tag"
+  type        = string
+}
+
+variable "nodegroup_max" {
+  description = "노드그룹을 통해서 생성되는 EC2에 부여할 Tag"
+  type        = string
+}
+
+variable "nodegroup_des" {
+  description = "노드그룹을 통해서 생성되는 EC2에 부여할 Tag"
+  type        = string
+}
+
+variable "nodegroup_subnets" {
+  description = "노드그룹 서브넷"
+  type        = list(string)
+}
+
+variable "is_spot" {
+  description = "노드그룹 스팟 인스턴스 사용 여부"
+  type = bool
+  default = false
+}
+
+variable "nodegroup_type" {
+  description = "노드그룹 타입"
+  type = list(string)
+  default = ["t3.medium"]
+}
+
+variable "is_pdb_ignore" {
+  description = "pdb 문제로 업그레이드가 불가능한 경우 이를 무시하고 업그레이드가 가능"
+  type = bool
+  default = false
+}

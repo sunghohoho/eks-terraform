@@ -1,3 +1,4 @@
+# 네트워크 환경 구성, vpc, public sub, private sub, rt, nat 등등
 module "vpc" {
   source = "../modules/network"
 
