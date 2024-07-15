@@ -66,3 +66,40 @@ resource "aws_eks_addon" "ebs_csi_controller" {
   addon_version               = data.aws_eks_addon_version.ebs_csi_version.version
 }
 
+################################################################################
+# gp3 사용하기
+################################################################################
+
+# 기존 gp2 storage class default 설정 해제
+resource "kubernetes_annotations" "gp2" {
+  api_version = "storage.k8s.io/v1"
+  kind        = "StorageClass"
+  metadata {
+    name = "gp2"
+  }
+  annotations = {
+    "storageclass.kubernetes.io/is-default-class" = "false"
+  }
+  depends_on = [ kubernetes_storage_class.gp3 ]
+}
+
+# 스토리지 클래스 변경 https://honglab.tistory.com/249
+# gp3 strorage class 선언
+resource "kubernetes_storage_class" "gp3" {
+  metadata {
+    name = "gp3"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" : "true"
+    }
+  }
+  storage_provisioner = "ebs.csi.aws.com"
+  volume_binding_mode = "WaitForFirstConsumer"
+  allow_volume_expansion = true
+  # reclaim_policy      = "Delete"
+  parameters = {
+    type                      = "gp3"
+    encrypted                 = true
+  }
+  
+  depends_on = [ aws_eks_addon.ebs_csi_controller ]
+}
