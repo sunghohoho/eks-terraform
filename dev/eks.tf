@@ -18,6 +18,14 @@ module "eks" {
 	nodegroup_des = 1
 	is_pdb_ignore = true
 
+	#oidc = ["gitaction"]
+	#/eks-terraform/modules/eks/oidc 구성 확인하기
+
 	depends_on = [ module.vpc ]
 }
 
+module "addon" {
+	source = "../modules/addon"
+	cluster_name = local.project
+	eks_version = local.eks_version
+}
