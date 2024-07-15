@@ -54,7 +54,7 @@ resource "aws_eks_addon" "kube_proxy" {
 # 04
 # ebs-csi 드라이버 최신버전 가져오기
 data "aws_eks_addon_version" "ebs_csi_version" {
-  addon_name         = "kube-proxy"
+  addon_name         = "aws-ebs-csi-driver"
   kubernetes_version = var.eks_version
   most_recent        = true
 }

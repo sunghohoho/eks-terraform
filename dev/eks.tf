@@ -2,7 +2,7 @@
 module "eks" {
 	source = "../modules/eks"
 	cluster_name = local.project
-	eks_version = "1.29"
+	eks_version = local.eks_version
 	vpc_id = module.vpc.vpc_id
 	subnets = module.vpc.public_subnet_ids
 	endpoint_private_access = true
