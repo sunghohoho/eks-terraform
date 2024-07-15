@@ -2,6 +2,7 @@
 locals {
   # 네이밍에 사용할 접두사 지정
   project = "myeks"
+  eks_version = "1.29"
   tags = {
     env = "dev"
     part = local.project
