@@ -28,4 +28,6 @@ module "addon" {
 	source = "../modules/addon"
 	cluster_name = local.project
 	eks_version = local.eks_version
+
+	depends_on = [ module.eks ]
 }

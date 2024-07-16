@@ -64,6 +64,8 @@ resource "aws_eks_addon" "ebs_csi_controller" {
   cluster_name                = "${var.cluster_name}-cluster"
   addon_name                  = "aws-ebs-csi-driver"
   addon_version               = data.aws_eks_addon_version.ebs_csi_version.version
+  # resolve_conflicts_on_update = "OVERWRITE"
+  # resolve_conflicts_on_create = "OVERWRITE"
 }
 
 ################################################################################
@@ -80,6 +82,10 @@ resource "kubernetes_annotations" "gp2" {
   annotations = {
     "storageclass.kubernetes.io/is-default-class" = "false"
   }
+  
+  # force가 true이면 테라폼 외부에서 생성되거나 편집된 주석을 강제로 덮어씌웁니다. 여기서는 terraform 으로 지정하는데 왜 false면 안될까요?
+  force = true
+
   depends_on = [ kubernetes_storage_class.gp3 ]
 }
 
