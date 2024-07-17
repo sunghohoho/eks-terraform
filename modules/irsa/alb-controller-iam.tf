@@ -1,3 +1,11 @@
+data "aws_caller_identity" "current" {} 
+# data.aws_caller_identity.current.account_id
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  oidc = replace(var.cluster_identity_oidc_issuer_arn, "https://", "")
+}
+
 data "aws_iam_policy_document" "alb_controller_policy_a" {
   statement {
     effect = "Allow"
@@ -244,28 +252,6 @@ data "aws_iam_policy_document" "alb_controller_policy_a" {
     }
   }
 }
-#   data "aws_iam_policy_document" "alb_controller_assume" {
-
-#   statement {
-#     actions = ["sts:AssumeRoleWithWebIdentity"]
-
-#     principals {
-#       type        = "Federated"
-#       identifiers = [var.cluster_identity_oidc_issuer_arn]
-#     }
-
-#     condition {
-#       test     = "StringEquals"
-#       variable = "${replace(var.cluster_identity_oidc_issuer, "https://", "")}:sub"
-
-#       values = [
-#         "system:serviceaccount:${var.namespace}:${var.service_account_name}",
-#       ]
-#     }
-
-#     effect = "Allow"
-#   }
-# }
 
 resource "aws_iam_policy" "alb_controller_policy" {
   name        = "${var.cluster_name}_alb_controller_policy"
@@ -276,23 +262,40 @@ resource "aws_iam_policy" "alb_controller_policy" {
 
 resource "aws_iam_role" "alb_controller_role" {
   name               = "${var.cluster_name}_alb_controller_role"
-  # assume_role_policy = data.aws_iam_policy_document.alb_controller_assume[0].json
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
+  # 인라인 형식으로 policy를 입력, 공백이 없어야 하므로 소괄호를 바짝 붙여주세요
+  assume_role_policy = <<POLICY
+{
+   "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::${local.account_id}:oidc-provider/${local.oidc}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "${local.oidc}:aud": "sts.amazonaws.com",
+                    "${local.oidc}:sub": "system:serviceaccount:${var.namespace}:${var.service_account}"
+                }
+            }
         }
-      },
     ]
-  })
+}
+  POLICY
 }
 
 resource "aws_iam_role_policy_attachment" "alb_controller_role_att" {
   role       = aws_iam_role.alb_controller_role.name
   policy_arn = aws_iam_policy.alb_controller_policy.arn
+}
+
+resource "kubernetes_service_account" "alb_controller_service_account" {
+  metadata {
+    name      = var.service_account
+    namespace = var.namespace
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.alb_controller_role.arn
+    }
+  }
 }

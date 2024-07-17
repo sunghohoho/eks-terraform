@@ -44,8 +44,7 @@ module "addon" {
 module "irsa" {
 	source = "../modules/irsa"
 	cluster_name = local.project
-	# namespace = "default"
-	# service_account_name = "alb_controller"
-	# cluster_identity_oidc_issuer_arn = ""
-	# cluster_identity_oidc_issuer = ""
+	namespace = "default"
+	service_account = "alb-controller"
+	cluster_identity_oidc_issuer_arn = module.eks.cluster_identity_oidc_issuer_arn
 }
