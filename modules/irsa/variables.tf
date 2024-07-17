@@ -4,19 +4,31 @@ variable "cluster_name" {
   default = false
 }
 
-variable "namespace" {
+variable "cluster_identity_oidc_issuer_arn" {
+  description = "cluster의 oidc arn"
+  type = string
+}
+
+variable "alb_namespace" {
   description = "네임스페이스"
   type = string
   default = "kube-system"
 }
 
-variable "service_account" {
+variable "alb_service_account" {
   description = "서비스 계정"
   type = string
-  default = "cluster-autoscaler"
+  default = "aws-load-balancer-controller"
 }
 
-variable "cluster_identity_oidc_issuer_arn" {
-  description = "cluster의 oidc arn"
+variable "exdns_namespace" {
+  description = "네임스페이스"
   type = string
+  default = "kube-system"
+}
+
+variable "exdns_service_account" {
+  description = "서비스 계정"
+  type = string
+  default = "external-dns"
 }

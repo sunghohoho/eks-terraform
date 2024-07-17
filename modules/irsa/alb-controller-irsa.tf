@@ -1,10 +1,3 @@
-data "aws_caller_identity" "current" {} 
-# data.aws_caller_identity.current.account_id
-
-locals {
-  account_id = data.aws_caller_identity.current.account_id
-  oidc = replace(var.cluster_identity_oidc_issuer_arn, "https://", "")
-}
 
 data "aws_iam_policy_document" "alb_controller_policy_a" {
   statement {
@@ -276,7 +269,7 @@ resource "aws_iam_role" "alb_controller_role" {
             "Condition": {
                 "StringEquals": {
                     "${local.oidc}:aud": "sts.amazonaws.com",
-                    "${local.oidc}:sub": "system:serviceaccount:${var.namespace}:${var.service_account}"
+                    "${local.oidc}:sub": "system:serviceaccount:${var.alb_namespace}:${var.alb_service_account}"
                 }
             }
         }
@@ -292,8 +285,8 @@ resource "aws_iam_role_policy_attachment" "alb_controller_role_att" {
 
 resource "kubernetes_service_account" "alb_controller_service_account" {
   metadata {
-    name      = var.service_account
-    namespace = var.namespace
+    name      = var.alb_service_account
+    namespace = var.alb_namespace
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.alb_controller_role.arn
     }
