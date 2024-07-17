@@ -2,7 +2,7 @@
 # Nodegroup Role 및 policy
 ################################################################################
 resource "aws_iam_role" "this" {
-  name = "${var.cluster_name}-nodegroup-role"
+  name = "${var.cluster_name}-nodegroup-role-${local.now}"
 
   assume_role_policy = jsonencode({
     Statement = [{

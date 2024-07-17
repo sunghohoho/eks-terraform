@@ -1,9 +1,17 @@
+data "aws_caller_identity" "current" {} 
+# data.aws_caller_identity.current.account_id
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  now = formatdate("YYMMDDhh", timeadd(timestamp(), "9h"))
+}
+
 ################################################################################
 # EKS Role, SG
 ################################################################################
 # EKS 클러스터 Role 생성, eks에 대한 신뢰관계 추가
 resource "aws_iam_role" "eks_service_role" {
-  name = "${var.cluster_name}-cluster-service-role"
+  name = "${var.cluster_name}-cluster-service-role-${local.now}"
 
   assume_role_policy = <<POLICY
 {
