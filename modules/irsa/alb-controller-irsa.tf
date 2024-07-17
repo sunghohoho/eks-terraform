@@ -248,7 +248,7 @@ data "aws_iam_policy_document" "alb_controller_policy_a" {
 
 # alb-controller policy 생성
 resource "aws_iam_policy" "alb_controller_policy" {
-  name        = "${var.cluster_name}_alb_controller_policy"
+  name        = "${var.cluster_name}_alb_controller_policy-${local.now}"
   path        = "/"
   description = "Policy for aws-load-balancer-controller service"
   # 위의 policy 선택
@@ -257,7 +257,7 @@ resource "aws_iam_policy" "alb_controller_policy" {
 
 # alb-controller role 생성
 resource "aws_iam_role" "alb_controller_role" {
-  name               = "${var.cluster_name}_alb_controller_role"
+  name               = "${var.cluster_name}_alb_controller_role-${local.now}"
   # 인라인 형식으로 policy를 입력, 공백이 없어야 하므로 소괄호를 바짝 붙여주세요
   assume_role_policy = <<POLICY
 {

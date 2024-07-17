@@ -28,10 +28,6 @@ output "arn" {
 	value = module.eks.cluster_identity_oidc_issuer_arn
 }
 
-# output "issuer" {
-# 	value = cluster_identity_oidc_issuer
-# }
-
 
 module "addon" {
 	source = "../modules/addon"
@@ -44,7 +40,7 @@ module "addon" {
 module "irsa" {
 	source = "../modules/irsa"
 	cluster_name = local.project
-	# alb_namespace = "default"
-	# alb_service_account = "alb-controller"
 	cluster_identity_oidc_issuer_arn = module.eks.cluster_identity_oidc_issuer_arn
+
+	depends_on = [ module.eks ]
 }

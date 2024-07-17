@@ -73,6 +73,6 @@ resource "aws_eks_cluster" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name              = "/aws/eks/${var.cluster_name}2/cluster"
+  name              = "/aws/eks/${var.cluster_name}/cluster"
   retention_in_days = 30
 }

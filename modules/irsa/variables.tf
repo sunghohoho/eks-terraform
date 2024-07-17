@@ -10,25 +10,25 @@ variable "cluster_identity_oidc_issuer_arn" {
 }
 
 variable "alb_namespace" {
-  description = "네임스페이스"
+  description = "alb 컨트롤러 네임스페이스"
   type = string
   default = "kube-system"
 }
 
 variable "alb_service_account" {
-  description = "서비스 계정"
+  description = "alb 컨트롤러 서비스 계정"
   type = string
   default = "aws-load-balancer-controller"
 }
 
 variable "exdns_namespace" {
-  description = "네임스페이스"
+  description = "external dns 네임스페이스"
   type = string
   default = "kube-system"
 }
 
 variable "exdns_service_account" {
-  description = "서비스 계정"
+  description = "external dns 서비스 계정"
   type = string
   default = "external-dns"
 }

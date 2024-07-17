@@ -1,10 +1,3 @@
-# data "aws_caller_identity" "current" {} 
-# # data.aws_caller_identity.current.account_id
-
-# locals {
-#   account_id = data.aws_caller_identity.current.account_id
-#   oidc = replace(var.cluster_identity_oidc_issuer_arn, "https://", "")
-# }
 
 data "aws_iam_policy_document" "externaldns_policy" {
   statement {
@@ -35,12 +28,12 @@ data "aws_iam_policy_document" "externaldns_policy" {
 }
 
 resource "aws_iam_policy" "externaldns_policy" {
-  name   = "${var.cluster_name}_externaldns_policy"
+  name   = "${var.cluster_name}_externaldns_policy-${local.now}"
   policy = data.aws_iam_policy_document.externaldns_policy.json
 }
 
 resource "aws_iam_role" "externaldns_role" {
-  name               = "${var.cluster_name}_externaldns_role"
+  name               = "${var.cluster_name}_externaldns_role-${local.now}"
   # 인라인 형식으로 policy를 입력, 공백이 없어야 하므로 소괄호를 바짝 붙여주세요
   assume_role_policy = <<POLICY
 {
