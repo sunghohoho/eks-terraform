@@ -24,10 +24,28 @@ module "eks" {
 	depends_on = [ module.vpc ]
 }
 
+output "arn" {
+	value = module.eks.cluster_identity_oidc_issuer_arn
+}
+
+# output "issuer" {
+# 	value = cluster_identity_oidc_issuer
+# }
+
+
 module "addon" {
 	source = "../modules/addon"
 	cluster_name = local.project
 	eks_version = local.eks_version
 
 	depends_on = [ module.eks ]
+}
+
+module "irsa" {
+	source = "../modules/irsa"
+	cluster_name = local.project
+	# namespace = "default"
+	# service_account_name = "alb_controller"
+	# cluster_identity_oidc_issuer_arn = ""
+	# cluster_identity_oidc_issuer = ""
 }

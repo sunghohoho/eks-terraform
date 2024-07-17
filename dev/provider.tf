@@ -25,7 +25,7 @@ terraform {
 ################################################################################
 # addon 모듈에서 storage class 및 annotations 리소스 사용, kuberentes 연결을 위한 프로바이더 지정
 ################################################################################
-
+# https://navyadevops.hashnode.dev/step-by-step-guide-creating-an-eks-cluster-with-alb-controller-using-terraform-modules
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   token                  = data.aws_eks_cluster_auth.this.token
