@@ -1,4 +1,4 @@
-
+# alb-controller에 필수인 policy 정의
 data "aws_iam_policy_document" "alb_controller_policy_a" {
   statement {
     effect = "Allow"
@@ -246,13 +246,16 @@ data "aws_iam_policy_document" "alb_controller_policy_a" {
   }
 }
 
+# alb-controller policy 생성
 resource "aws_iam_policy" "alb_controller_policy" {
   name        = "${var.cluster_name}_alb_controller_policy"
   path        = "/"
   description = "Policy for aws-load-balancer-controller service"
+  # 위의 policy 선택
   policy = data.aws_iam_policy_document.alb_controller_policy_a.json
 }
 
+# alb-controller role 생성
 resource "aws_iam_role" "alb_controller_role" {
   name               = "${var.cluster_name}_alb_controller_role"
   # 인라인 형식으로 policy를 입력, 공백이 없어야 하므로 소괄호를 바짝 붙여주세요
@@ -278,11 +281,13 @@ resource "aws_iam_role" "alb_controller_role" {
   POLICY
 }
 
+# 생성된 role에 권한 부여
 resource "aws_iam_role_policy_attachment" "alb_controller_role_att" {
   role       = aws_iam_role.alb_controller_role.name
   policy_arn = aws_iam_policy.alb_controller_policy.arn
 }
 
+# alb-controller 전용 irsa 생성
 resource "kubernetes_service_account" "alb_controller_service_account" {
   metadata {
     name      = var.alb_service_account
