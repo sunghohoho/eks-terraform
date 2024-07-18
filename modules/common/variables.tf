@@ -11,3 +11,8 @@ variable "alb_service_name" {
   type = string
   default = "aws-load-balancer-controller"
 }
+
+variable "exdns_service_account" {
+  type = string
+  default = "external-dns"
+}
