@@ -13,9 +13,9 @@ module "eks" {
 	is_spot = false
 	nodegroup_type = ["t3.medium"]
 	nodegroup_subnets = module.vpc.public_subnet_ids
-	nodegroup_min = 1
-	nodegroup_max = 2
-	nodegroup_des = 1
+	nodegroup_min = 2
+	nodegroup_max = 3
+	nodegroup_des = 2
 	is_pdb_ignore = true
 
 	#oidc = ["gitaction"]
@@ -23,11 +23,6 @@ module "eks" {
 
 	depends_on = [ module.vpc ]
 }
-
-output "arn" {
-	value = module.eks.cluster_identity_oidc_issuer_arn
-}
-
 
 module "addon" {
 	source = "../modules/addon"
@@ -43,4 +38,15 @@ module "irsa" {
 	cluster_identity_oidc_issuer_arn = module.eks.cluster_identity_oidc_issuer_arn
 
 	depends_on = [ module.eks ]
+}
+
+module "common" {
+	source = "../modules/common"
+	cluster_name = module.eks.cluster_name
+
+	depends_on = [ module.eks ]
+}
+
+output "kubeconfig_command" {
+  value = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${module.eks.cluster_name}"
 }
