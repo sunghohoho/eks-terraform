@@ -16,3 +16,8 @@ variable "exdns_service_account" {
   type = string
   default = "external-dns"
 }
+
+variable "create_namespace" {
+  type = bool
+  default = true
+}
