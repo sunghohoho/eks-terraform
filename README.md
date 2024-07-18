@@ -12,8 +12,6 @@ myeks AWS Infrastructure as Code(IaC)
 ## Terraform Folder Structure
 ```
 terraform
-.
-├── README.md
 ├── dev
 │   ├── data.tf
 │   ├── eks.tf
@@ -24,14 +22,14 @@ terraform
 ├── modules
 │   ├── addon
 │   │   ├── eks-addon.tf
-│   │   ├── provider.tf
 │   │   └── variables.tf
 │   ├── common
 │   │   ├── alb-controller.tf
 │   │   ├── external-dns.tf
+│   │   ├── fluent-bit-values.yaml
+│   │   ├── fluent-bit.tf
 │   │   ├── main.tf
 │   │   ├── metric.tf
-│   │   ├── provider.tf
 │   │   └── variables.tf
 │   ├── eks
 │   │   ├── eks.tf
@@ -44,7 +42,6 @@ terraform
 │   │   ├── external-dns-irsa.tf
 │   │   ├── irsa.tf
 │   │   ├── outputs.tf
-│   │   ├── provider.tf
 │   │   └── variables.tf
 │   └── network
 │       ├── main.tf

@@ -1,3 +1,4 @@
+# helm chart 구성하기, https://artifacthub.io/packages/helm/aws/aws-load-balancer-controller
 resource "helm_release" "alb_controller" {
   name       = "aws-load-balancer-controller"
   chart      = "aws-load-balancer-controller"
