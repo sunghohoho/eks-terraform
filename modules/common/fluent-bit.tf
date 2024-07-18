@@ -17,6 +17,12 @@ resource "helm_release" "fluent-bit" {
   chart = "fluent-bit"
   repository = "https://fluent.github.io/helm-charts"
   version = "0.47.0"
+  values = [
+    templatefile("${path.module}/fluent-bit-values.yaml", {
+      bucket_name = aws_s3_bucket.fluent-bit.bucket
+      aws_region = data.aws_region.current.name
+    })
+  ]
 
   set {
     name = "clusterName"

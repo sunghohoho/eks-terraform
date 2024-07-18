@@ -1,0 +1,38 @@
+config:
+  inputs: |
+    [INPUT]
+        Name             tail
+        Path             /var/log/containers/*.log
+        Exclude_Path     /var/log/containers/*_kube-system_*,/var/log/containers/*_argocd_*,/var/log/containers/*_ingress-nginx_*,/var/log/containers/*_monitoring_*,/var/log/containers/*_thanos_*,/var/log/containers/*_sonarqube_*,/var/log/containers/*_kubecost_*,/var/log/containers/*_logging_*,/var/log/containers/*_nvidia_*
+        multiline.parser docker, cri
+        Tag              kube.*
+        Mem_Buf_Limit    5MB
+        Skip_Long_Lines  On
+  filters: |
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Merge_Log           On
+        Keep_Log            Off
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude On
+    [FILTER]
+        Name   rewrite_tag
+        Match  kube.*
+        Rule   $kubernetes['namespace_name'] ^(.*)$ namespace.$0 false
+    [FILTER]
+        Name   rewrite_tag
+        Match  namespace.*
+        Rule   $kubernetes['labels']['app.kubernetes.io/name'] ^(.*)$ app.$0.$TAG false
+    [FILTER]
+        Name   rewrite_tag
+        Match  app.*
+        Rule   $kubernetes['container_name'] ^(.*)$ container.$0.$TAG false
+  outputs: |
+    [OUTPUT]
+        Name          s3
+        Match         container.*
+        bucket        ${bucket_name}
+        region        ${aws_region}
+        log_key       log
+        s3_key_format /kube/$TAG[5]/$TAG[3]/$TAG[1]/%Y/%m/%d/%H/%M
