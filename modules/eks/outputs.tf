@@ -13,4 +13,3 @@ output "cluster_name" {
 output "cluster_identity_oidc_issuer_arn" {
   value = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
-
