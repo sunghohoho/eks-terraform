@@ -3,7 +3,8 @@ data "aws_caller_identity" "current" {}
 
 locals {
   account_id = data.aws_caller_identity.current.account_id
-  now = formatdate("YYMMDDhh", timeadd(timestamp(), "9h"))
+  # now = formatdate("YYMMDDhh", timeadd(timestamp(), "9h"))
+  now = formatdate("YYMMDD", timestamp())
 }
 
 ################################################################################
@@ -11,7 +12,7 @@ locals {
 ################################################################################
 # EKS 클러스터 Role 생성, eks에 대한 신뢰관계 추가
 resource "aws_iam_role" "eks_service_role" {
-  name = "${var.cluster_name}-cluster-service-role-${local.now}"
+  name = "${var.cluster_name}-cluster-service-role"
 
   assume_role_policy = <<POLICY
 {
@@ -35,14 +36,10 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
   role       = aws_iam_role.eks_service_role.name
 }
 
-# resource "aws_iam_role_policy_attachment" "eks_loggroup_policy" {
-#   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-#   role       = aws_iam_role.eks_service_role.name
-# }
-
 # eks에 부여할 보안그룹 생성
 resource "aws_security_group" "this" {
   name        = "${var.cluster_name}-cluster-sg"
+
   description = "control communications from the Kubernetes control plane to compute resources in your account."
   vpc_id      = var.vpc_id
 }
