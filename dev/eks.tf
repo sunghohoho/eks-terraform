@@ -13,9 +13,9 @@ module "eks" {
 	is_spot = false
 	nodegroup_type = ["t3.medium"]
 	nodegroup_subnets = module.vpc.public_subnet_ids
-	nodegroup_min = 2
-	nodegroup_max = 3
-	nodegroup_des = 2
+	nodegroup_min = 3
+	nodegroup_max = 6
+	nodegroup_des = 3
 	is_pdb_ignore = true
 
 	#oidc = ["gitaction"]
