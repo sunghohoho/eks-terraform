@@ -26,3 +26,21 @@ resource "helm_release" "alb_controller" {
     value = var.alb_service_name
   }
 }
+
+# alb 컨트롤러 tag 변경하기
+# private의 경우 kubernetes.io/role/internal-elb : 1
+# public의 경우 kubernetes.io/role/elb : 1
+
+resource "aws_ec2_tag" "alb_controller_private" {
+  count = length(var.private)
+  resource_id = var.private[count.index]
+  key         = "kubernetes.io/role/internal-elb"
+  value       = "1"
+}
+
+resource "aws_ec2_tag" "alb_controller_public" {
+  count = length(var.public)
+  resource_id = var.public[count.index]
+  key = "kubernetes.io/role/elb"
+  value       = "1"
+}

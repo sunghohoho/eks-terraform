@@ -21,3 +21,13 @@ variable "create_namespace" {
   type = bool
   default = true
 }
+
+variable "public" {
+  type = list(string)
+  default = []
+}
+
+variable "private" {
+  type = list(string)
+  default = []
+}

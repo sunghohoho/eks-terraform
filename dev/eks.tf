@@ -43,7 +43,8 @@ module "irsa" {
 module "common" {
 	source = "../modules/common"
 	cluster_name = module.eks.cluster_name
-
+	public = module.vpc.public_subnet_ids
+	private = module.vpc.private_subnet_ids
 	depends_on = [ module.eks ]
 }
 
