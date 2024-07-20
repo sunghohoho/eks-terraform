@@ -29,13 +29,13 @@ data "aws_iam_policy_document" "externaldns_policy" {
 
 # external dns policy 생성
 resource "aws_iam_policy" "externaldns_policy" {
-  name   = "${var.cluster_name}_externaldns_policy-${local.now}"
+  name   = "${var.cluster_name}_externaldns_policy"
   policy = data.aws_iam_policy_document.externaldns_policy.json
 }
 
 # external dns role 생성
 resource "aws_iam_role" "externaldns_role" {
-  name               = "${var.cluster_name}_externaldns_role-${local.now}"
+  name               = "${var.cluster_name}_externaldns_role"
   # 인라인 형식으로 policy를 입력, 공백이 없어야 하므로 소괄호를 바짝 붙여주세요
   assume_role_policy = <<POLICY
 {
