@@ -12,10 +12,10 @@ myeks AWS Infrastructure as Code(IaC)
 ## Terraform Folder Structure
 ```
 terraform
+├── README.md
 ├── dev
 │   ├── data.tf
 │   ├── eks.tf
-│   ├── errored.tfstate
 │   ├── local.tf
 │   ├── network.tf
 │   └── provider.tf
@@ -26,8 +26,11 @@ terraform
 │   ├── common
 │   │   ├── alb-controller.tf
 │   │   ├── external-dns.tf
-│   │   ├── fluent-bit-values.yaml
 │   │   ├── fluent-bit.tf
+│   │   ├── helm-values
+│   │   │   ├── fluent-bit-values.yaml
+│   │   │   └── kubeopsview-values.yaml
+│   │   ├── kubeopsview.tf
 │   │   ├── main.tf
 │   │   ├── metric.tf
 │   │   └── variables.tf
