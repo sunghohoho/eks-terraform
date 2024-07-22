@@ -4,9 +4,9 @@ resource "helm_release" "kubeopsview" {
   repository = "https://charts.christianhuth.de"
   namespace = "kube-system"
   version = "3.5.0"
-  values = [
-    templatefile("${path.module}/kubeopsview-values.yaml", {})
-  ]
+  # values = [
+  #   templatefile("${path.module}/kubeopsview-values.yaml", {})
+  # ]
 
   set {
     name = "serviceAccount.create"
@@ -46,13 +46,13 @@ resource "helm_release" "kubeopsview" {
 # 그래서 alb\\.ingress\\.kubernetes\\.io/schme 와 하위로 들어가야하는 경우는 \\없이 작성 필요
 ##############################
 
-#   set {
-#     name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
-#     value = "internet-facing"
-#   }
+  set {
+    name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
+    value = "internet-facing"
+  }
 
-#   set {
-#     name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/target-type"
-#     value = "ip"
-#   }
+  set {
+    name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/target-type"
+    value = "ip"
+  }
 }

@@ -31,7 +31,7 @@ config:
   outputs: |
     [OUTPUT]
         Name          s3
-        Match         container.*
+        Match         *
         bucket        ${bucket_name}
         region        ${aws_region}
         log_key       log

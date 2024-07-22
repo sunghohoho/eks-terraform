@@ -23,7 +23,7 @@ resource "helm_release" "fluent-bit" {
   # fluent-bit conf 구성을 위한 values 설정
   values = [
     # 동일한 디렉터리의 values.yaml 파일 참고
-    templatefile("${path.module}/fluent-bit-values.yaml", {
+    templatefile("${path.module}/helm-values/fluent-bit-values.yaml", {
       # bucket_name, aws_region 변수 선언 필요
       # yaml 파일에서 ${bucket_name}, ${aws_region}로 사용가능, values의 35-36 라인에서 사용
       bucket_name = aws_s3_bucket.fluent-bit.bucket
@@ -51,3 +51,4 @@ resource "helm_release" "fluent-bit" {
     value = "true"
   }
 }
+
