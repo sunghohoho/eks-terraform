@@ -1,4 +1,6 @@
-# eks 클러스터 구성
+################################################################################
+# EKS, NodeGroup 생성
+################################################################################
 module "eks" {
 	source = "../modules/eks"
 	cluster_name = local.project
@@ -24,6 +26,9 @@ module "eks" {
 	depends_on = [ module.vpc ]
 }
 
+################################################################################
+# addon 구성 (vpc cni, ebs csi, kube proxy, coreDNS)
+################################################################################
 module "addon" {
 	source = "../modules/addon"
 	cluster_name = local.project
@@ -32,13 +37,17 @@ module "addon" {
 	depends_on = [ module.eks ]
 }
 
-module "irsa" {
-	source = "../modules/irsa"
-	cluster_name = local.project
-	cluster_identity_oidc_issuer_arn = module.eks.cluster_identity_oidc_issuer_arn
+# module "irsa" {
+# 	source = "../modules/irsa"
+# 	cluster_name = local.project
+# 	cluster_identity_oidc_issuer_arn = module.eks.cluster_identity_oidc_issuer_arn
 
-	depends_on = [ module.eks ]
-}
+# 	depends_on = [ module.eks ]
+# }
+
+################################################################################
+# albcontroller, externaldns, fluentbit 설치
+################################################################################
 
 module "common" {
 	source = "../modules/common"
@@ -49,6 +58,15 @@ module "common" {
 	oidc_issuer_url = module.eks.cluster_identity_oidc_issuer_arn
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 }
+
+################################################################################
+# 테스트 애플리케이션 실행
+################################################################################
+# resource "kubectl_manifest" "test" {
+# 	yaml_body = file("${path.module}/ingress1.yaml")
+# 	depends_on = [ module.common ]
+# }
+
 
 output "oidc" {
 	value = "oidc anr = ${module.eks.cluster_identity_oidc_arn}, oidc issuer = ${module.eks.cluster_identity_oidc_issuer_arn}"
