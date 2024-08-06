@@ -31,3 +31,27 @@ variable "private" {
   type = list(string)
   default = []
 }
+
+
+variable "oidc_issuer_url" {
+  type = string
+}
+
+variable "oidc_provider_arn" {
+  type = string
+}
+
+variable "external_dns_chart_version" {
+  type = string
+  default = "8.3.2"
+}
+
+variable "alb_controller_chart_version" {
+  type = string
+  default = "1.8.1"
+}
+
+variable "fluent_bit_chart_version" {
+    type = string
+    default = "0.47.0"
+}
