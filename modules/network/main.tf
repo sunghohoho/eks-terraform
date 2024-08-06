@@ -104,8 +104,6 @@ resource "aws_route_table_association" "private" {
 
 # nat에 부여할 eip 생성
 resource "aws_eip" "this" {
-  vpc = true
-
   tags = {
     "Name" = "${var.project}-eip"
   }
