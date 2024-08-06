@@ -13,17 +13,17 @@ myeks AWS Infrastructure as Code(IaC)
 ```
 terraform
 ├── README.md
-├── dev
+├── dev             # dev eks 배포
 │   ├── data.tf
 │   ├── eks.tf
 │   ├── local.tf
 │   ├── network.tf
 │   └── provider.tf
 ├── modules
-│   ├── addon
+│   ├── addon       # vpc cni, ebs csi, coredns, kube-proxy
 │   │   ├── eks-addon.tf
 │   │   └── variables.tf
-│   ├── common
+│   ├── common      # helm으로 관리하는 app
 │   │   ├── alb-controller.tf
 │   │   ├── external-dns.tf
 │   │   ├── fluent-bit.tf
@@ -34,7 +34,7 @@ terraform
 │   │   ├── main.tf
 │   │   ├── metric.tf
 │   │   └── variables.tf
-│   ├── eks
+│   ├── eks         
 │   │   ├── eks.tf
 │   │   ├── nodegroup.tf
 │   │   ├── oidc.tf
