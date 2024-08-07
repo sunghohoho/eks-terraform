@@ -55,7 +55,7 @@ module "common" {
 	public = module.vpc.public_subnet_ids
 	private = module.vpc.private_subnet_ids
 	depends_on = [ module.eks ]
-	oidc_issuer_url = module.eks.cluster_identity_oidc_issuer_arn
+	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 }
 

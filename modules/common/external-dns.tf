@@ -77,3 +77,5 @@ serviceAccount:
 EOV
   ]
 }
+# https://velog.io/@nigasa12/External-dns%EC%97%90-exclude-filter%EB%A5%BC-%EA%B1%B8%EC%96%B4%EB%B3%B4%EC%9E%90
+# external-dns.alpha.kubernetes.io/exclude: "true"를 사용하여 ingress 등록 안할 수 있음
