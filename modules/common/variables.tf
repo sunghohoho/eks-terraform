@@ -55,3 +55,8 @@ variable "fluent_bit_chart_version" {
     type = string
     default = "0.47.0"
 }
+
+variable "prometheus-grafana-chart-version" {
+  type = string
+  default = "61.7.0"
+}

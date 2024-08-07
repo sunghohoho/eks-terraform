@@ -1,0 +1,9 @@
+prometheus:
+  ingress:
+    enabled: true
+    annotation:
+        meta.helm.sh/release-namespace: monitoring
+        app.kubernetes.io/managed-by: Helm
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+    ingressClassName: ${ingressclass}
