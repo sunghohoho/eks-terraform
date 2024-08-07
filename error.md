@@ -72,3 +72,12 @@ terraform
     }
   }
 ``` 
+
+6. ingress 리소스가 삭제되지 않음
+```yaml
+kubectl get ingress -n monitoring kube-prometheus-ingress -o yaml
+finalizers:
+  - ingress.k8s.aws/resources
+
+속성이 있는 경우 해당 라인을 지워줘야 정상적으로 ingress가 삭제됩니다.
+```
