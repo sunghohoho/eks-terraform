@@ -13,34 +13,37 @@ myeks AWS Infrastructure as Code(IaC)
 ```
 terraform
 ├── README.md
-├── dev             # dev eks 배포
+├── dev
 │   ├── data.tf
-│   ├── eks.tf
+│   ├── eks.tf      # eks 클러스터 생성
 │   ├── local.tf
-│   ├── network.tf
+│   ├── network.tf  # vpc 생성
 │   └── provider.tf
+├── error.md
 ├── modules
-│   ├── addon       # vpc cni, ebs csi, coredns, kube-proxy
+│   ├── addon   # vpc cni, ebs csi, coredns, kube-proxy
 │   │   ├── eks-addon.tf
 │   │   └── variables.tf
-│   ├── common      # helm으로 관리하는 app
+│   ├── common
 │   │   ├── alb-controller.tf
 │   │   ├── external-dns.tf
 │   │   ├── fluent-bit.tf
 │   │   ├── helm-values
 │   │   │   ├── fluent-bit-values.yaml
+│   │   │   ├── kube-prometheus-stack.yaml
 │   │   │   └── kubeopsview-values.yaml
 │   │   ├── kubeopsview.tf
 │   │   ├── main.tf
 │   │   ├── metric.tf
+│   │   ├── prometheus.tf
 │   │   └── variables.tf
-│   ├── eks         
+│   ├── eks
 │   │   ├── eks.tf
 │   │   ├── nodegroup.tf
 │   │   ├── oidc.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
-│   ├── irsa
+│   ├── irsa    # 미사용
 │   │   ├── alb-controller-irsa.tf
 │   │   ├── external-dns-irsa.tf
 │   │   ├── irsa.tf
