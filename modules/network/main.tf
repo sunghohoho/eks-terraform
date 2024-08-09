@@ -75,8 +75,9 @@ resource "aws_subnet" "private" {
   tags = {
     "Name" = format(
     "${var.project}-pri-subnet-%s",
-    substr(var.azs[count.index], -1, 1),
-    )
+    substr(var.azs[count.index], -1, 1)
+    ),
+    "kubernetes.io/role/elb" = "1"
   }
 }
 
@@ -89,8 +90,9 @@ resource "aws_route_table" "private" {
   tags = {
     "Name" = format(
     "${var.project}-pri-%s-rt",
-    substr(var.azs[count.index], -1, 1),
-    )
+    substr(var.azs[count.index], -1, 1)
+    ),
+    "kubernetes.io/role/internal-elb" = "1"
   }
 }
 
