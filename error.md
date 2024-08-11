@@ -99,3 +99,38 @@ finalizers:
 │       * Internal error occurred: failed calling webhook "vingress.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/validate-networking-v1-ingress?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
 │       * Internal error occurred: failed calling webhook "vingress.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/validate-networking-v1-ingress?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
 ```
+
+8. ingress 구성 시 targetgroup에 pod가 register 되지 않는 현상
+```yaml
+{
+  "level": "error",
+  "ts": "2024-08-09T11:15:32Z",
+  "msg": "Reconciler error",
+  "controller": "targetGroupBinding",
+  "controllerGroup": "elbv2.k8s.aws",
+  "controllerKind": "TargetGroupBinding",
+  "TargetGroupBinding": {
+    "name": "k8s-monitori-promethe-2b97ff96e5",
+    "namespace": "monitoring"
+  },
+  "namespace": "monitoring",
+  "name": "k8s-monitori-promethe-2b97ff96e5",
+  "reconcileID": "0b68d0e0-2af4-4fbf-a8dd-7854c21187ac",
+  "error": "AccessDenied: User: arn:aws:sts::866477832211:assumed-role/myeks-cluster-kube-system-aws-alb-con2024080911083073380000000e/1723201945139252758 is not authorized to perform: elasticloadbalancing:RegisterTargets on resource: arn:aws:elasticloadbalancing:ap-northeast-2:866477832211:targetgroup/k8s-monitori-promethe-2b97ff96e5/a3abbd7aeeb911df because no identity-based policy allows the elasticloadbalancing:RegisterTargets action\n\tstatus code: 403, request id: 11473f8d-a29c-4aed-ae26-794da9b9014b"
+}
+{
+  "level": "info",
+  "ts": "2024-08-09T11:15:40Z",
+  "msg": "registering targets",
+  "arn": "arn:aws:elasticloadbalancing:ap-northeast-2:866477832211:targetgroup/k8s-monitori-promethe-d0443b47ee/c165e8bfd2e33acd",
+  "targets": [
+    {
+      "AvailabilityZone": null,
+      "Id": "10.100.20.41",
+      "Port": 3000
+    }
+  ]
+}
+
+왜 인지 모르겠지만 registerTarget, DeregisterTarget에 대한 권한이 없었음, 추가
+```
