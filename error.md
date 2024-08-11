@@ -134,3 +134,12 @@ finalizers:
 
 왜 인지 모르겠지만 registerTarget, DeregisterTarget에 대한 권한이 없었음, 추가
 ```
+
+9. alb controller error
+```yaml
+╰─ kubectl logs -n kube-system aws-load-balancer-controller-5d9884fd45-ghvql
+{"level":"info","ts":"2024-08-11T12:31:17Z","msg":"version","GitVersion":"v2.8.1","GitCommit":"e6ce604adc0746511d58c3c81ac7eae7cdaf7bbe","BuildDate":"2024-05-31T21:34:51+0000"}
+{"level":"error","ts":"2024-08-11T12:31:17Z","logger":"setup","msg":"unable to create controller","controller":"TargetGroupBinding","error":"no matches for kind \"TargetGroupBinding\" in version \"elbv2.k8s.aws/v1beta1\""}
+
+crd를 강제로 삭제해서 이도저도 못하는 상황
+```
