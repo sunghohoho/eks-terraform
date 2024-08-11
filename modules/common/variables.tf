@@ -41,6 +41,10 @@ variable "oidc_provider_arn" {
   type = string
 }
 
+variable "acm_arn" {
+  type = string
+}
+
 variable "external_dns_chart_version" {
   type = string
   default = "8.3.2"

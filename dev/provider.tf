@@ -15,10 +15,12 @@ terraform {
       source  = "hashicorp/aws"
       version = "5.40.0"
     }
+    # kubectl 버전
     kubectl = {
       source  = "alekc/kubectl"
       version = ">= 2.0.2"
     }
+    # helm 버전
     helm = {
       source  = "hashicorp/helm"
       version = ">= 2.12.1"

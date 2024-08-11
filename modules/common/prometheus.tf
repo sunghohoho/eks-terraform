@@ -13,7 +13,7 @@ resource "helm_release" "prometheus_grafana" {
 
   values = [
     templatefile("${path.module}/helm-values/kube-prometheus-stack.yaml", {
-      ingressclass = "alb"
+      cert_arn = var.acm_arn
     })
   ]
 }

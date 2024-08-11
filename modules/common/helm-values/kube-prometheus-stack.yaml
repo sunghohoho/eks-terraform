@@ -1,32 +1,39 @@
 prometheus:
-  type: NodePort
   ingress:
     enabled: true
-    hosts: 
-      - prom.gguduck.com
-    # paths:
-    #   - /
+    ingressClassName: alb
     annotations:
         meta.helm.sh/release-namespace: monitoring
+        alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
         app.kubernetes.io/managed-by: Helm
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         external-dns.alpha.kubernetes.io/hostname: prom.gguduck.com
-    ingressClassName: ${ingressclass}
-    servicePort: 80
+        # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
+    hosts: 
+      - prom.gguduck.com
+    paths:
+      - /*
 
+# grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
+# https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
   ingress:
+    defaultDashboardsTimezone: Asia/Seoul
     enabled: true
+    ingressClassName: alb
     annotations:
         meta.helm.sh/release-namespace: monitoring
         app.kubernetes.io/managed-by: Helm
+        alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         external-dns.alpha.kubernetes.io/hostname: graf.gguduck.com
+        # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
     hosts: 
       - graf.gguduck.com
-    ingressClassName: ${ingressclass}
-    # path: 
-    #   - /
+    paths: 
+      - /*
+ 
+
 
