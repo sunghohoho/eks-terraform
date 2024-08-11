@@ -201,32 +201,6 @@ data "aws_iam_policy_document" "alb_controller_policy_a" {
   statement {
     effect = "Allow"
     actions = [
-      "elasticloadbalancing:AddTags"
-    ]
-    resources = [
-      "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
-      "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-      "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
-    ]
-    condition {
-      test     = "StringEquals"
-      variable = "elasticloadbalancing:CreateAction"
-      values = [
-        "CreateTargetGroup",
-        "CreateLoadBalancer"
-      ]
-    }
-    condition {
-      test     = "Null"
-      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-
-    }
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
       "elasticloadbalancing:ModifyLoadBalancerAttributes",
       "elasticloadbalancing:SetIpAddressType",
       "elasticloadbalancing:SetSecurityGroups",
@@ -243,7 +217,54 @@ data "aws_iam_policy_document" "alb_controller_policy_a" {
       values   = ["false"]
     }
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "elasticloadbalancing:AddTags"
+    ]
+    resources = [
+      "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "elasticloadbalancing:CreateAction"
+      values   = [
+        "CreateTargetGroup",
+        "CreateLoadBalancer"
+      ]
+    }
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "elasticloadbalancing:RegisterTargets",
+      "elasticloadbalancing:DeregisterTargets"
+    ]
+    resources = ["arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "elasticloadbalancing:SetWebAcl",
+      "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:AddListenerCertificates",
+      "elasticloadbalancing:RemoveListenerCertificates",
+      "elasticloadbalancing:ModifyRule"
+    ]
+    resources = ["*"]
+  }
 }
+
 
 # alb-controller policy 생성
 resource "aws_iam_policy" "alb_controller_policy" {
@@ -312,6 +333,7 @@ resources:
 EOV
   ]
 }
+# 중복나서 network에서부터 태깅
 # alb 컨트롤러 tag 변경하기
 # private의 경우 kubernetes.io/role/internal-elb : 1
 # public의 경우 kubernetes.io/role/elb : 1
