@@ -3,9 +3,7 @@ prometheus:
     enabled: true
     ingressClassName: alb
     annotations:
-        meta.helm.sh/release-namespace: monitoring
         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-        app.kubernetes.io/managed-by: Helm
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         external-dns.alpha.kubernetes.io/hostname: prom.gguduck.com
@@ -23,8 +21,6 @@ grafana:
     enabled: true
     ingressClassName: alb
     annotations:
-        meta.helm.sh/release-namespace: monitoring
-        app.kubernetes.io/managed-by: Helm
         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
