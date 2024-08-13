@@ -64,3 +64,8 @@ variable "prometheus-grafana-chart-version" {
   type = string
   default = "61.7.0"
 }
+
+variable "argocd-chart-version" {
+  type = string
+  default = "7.4.3"
+}

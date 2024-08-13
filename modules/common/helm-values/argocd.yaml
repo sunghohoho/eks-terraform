@@ -1,0 +1,35 @@
+server:
+  ingress: 
+    enabled: true
+    controller: aws
+    annotations:
+        alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        external-dns.alpha.kubernetes.io/hostname: argocd.gguduck.com
+        alb.ingress.kubernetes.io/backend-protocol: HTTPS
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":80}, {"HTTPS":443}]'
+        alb.ingress.kubernetes.io/ssl-redirect: '443'
+    ingressClassName: alb
+    hostname: argocd.gguduck.com
+    path: /
+    aws:
+      backendProtocolVersion: GRPC
+      serviceType: ClusterIP
+
+  configs:
+    secret:
+      argocdServerAdminPassword: rlatjdgh12
+
+
+# applicationSet:
+#   ingress:
+#     enabled: true
+#     annotations:
+#         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+#         alb.ingress.kubernetes.io/scheme: internet-facing
+#         alb.ingress.kubernetes.io/target-type: ip
+#         external-dns.alpha.kubernetes.io/hostname: argocdapp.gguduck.com
+#     ingressClassName: alb
+#     hostname: argocdapp.gguduck.com
+#     path: /
