@@ -143,3 +143,74 @@ finalizers:
 
 crd를 강제로 삭제해서 이도저도 못하는 상황
 ```
+
+10. 최초 실행시 발생하는 에러
+```yaml
+Warning: Helm release "external-dns" was created but has a failed status. Use the `helm` command to investigate the error, correct it, then run Terraform again.
+│ 
+│   with module.common.helm_release.external-dns,
+│   on ../modules/common/external-dns.tf line 58, in resource "helm_release" "external-dns":
+│   58: resource "helm_release" "external-dns" {
+│ 
+╵
+╷
+│ Warning: Helm release "fluent-bit" was created but has a failed status. Use the `helm` command to investigate the error, correct it, then run Terraform again.
+│ 
+│   with module.common.helm_release.fluent-bit,
+│   on ../modules/common/fluent-bit.tf line 41, in resource "helm_release" "fluent-bit":
+│   41: resource "helm_release" "fluent-bit" {
+│ 
+╵
+╷
+│ Warning: Helm release "prometheus-grafana" was created but has a failed status. Use the `helm` command to investigate the error, correct it, then run Terraform again.
+│ 
+│   with module.common.helm_release.prometheus_grafana,
+│   on ../modules/common/prometheus.tf line 7, in resource "helm_release" "prometheus_grafana":
+│    7: resource "helm_release" "prometheus_grafana" {
+│ 
+╵
+╷
+│ Error: 1 error occurred:
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│ 
+│ 
+│ 
+│   with module.common.helm_release.external-dns,
+│   on ../modules/common/external-dns.tf line 58, in resource "helm_release" "external-dns":
+│   58: resource "helm_release" "external-dns" {
+│ 
+╵
+╷
+│ Error: 1 error occurred:
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│ 
+│ 
+│ 
+│   with module.common.helm_release.fluent-bit,
+│   on ../modules/common/fluent-bit.tf line 41, in resource "helm_release" "fluent-bit":
+│   41: resource "helm_release" "fluent-bit" {
+│ 
+╵
+╷
+│ Error: 13 errors occurred:
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "vingress.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/validate-networking-v1-ingress?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│       * Internal error occurred: failed calling webhook "vingress.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/validate-networking-v1-ingress?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+│ 
+│ 
+│ 
+│   with module.common.helm_release.prometheus_grafana,
+│   on ../modules/common/prometheus.tf line 7, in resource "helm_release" "prometheus_grafana":
+│    7: resource "helm_release" "prometheus_grafana" {
+│ 
+```
