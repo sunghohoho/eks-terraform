@@ -3,10 +3,12 @@ prometheus:
     enabled: true
     ingressClassName: alb
     annotations:
+        alb.ingress.kubernetes.io/load-balancer-name: prometheus
         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         external-dns.alpha.kubernetes.io/hostname: prom.gguduck.com
+        alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253
         # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
     hosts: 
       - prom.gguduck.com
@@ -21,10 +23,12 @@ grafana:
     enabled: true
     ingressClassName: alb
     annotations:
+        alb.ingress.kubernetes.io/load-balancer-name: grafana
         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
         alb.ingress.kubernetes.io/scheme: internet-facing
         alb.ingress.kubernetes.io/target-type: ip
         external-dns.alpha.kubernetes.io/hostname: graf.gguduck.com
+        alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253
         # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
     hosts: 
       - graf.gguduck.com

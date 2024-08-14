@@ -18,3 +18,7 @@ output "cluster_identity_oidc_issuer_arn" {
 output "cluster_identity_oidc_arn" {
   value = aws_iam_openid_connect_provider.this.arn
 }
+
+output "cluster_nodegroup" {
+  value = aws_eks_node_group.this.id
+}

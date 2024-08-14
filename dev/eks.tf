@@ -27,14 +27,16 @@ module "eks" {
 }
 
 ################################################################################
-# addon 구성 (vpc cni, ebs csi, kube proxy, coreDNS)
+# addon 구성 (vpc cni, ebs csi, kube proxy, coreDNS, albcontroller)
 ################################################################################
 module "addon" {
 	source = "../modules/addon"
 	cluster_name = local.project
 	eks_version = local.eks_version
+	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
+	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 
-	depends_on = [ module.eks ]
+	depends_on = [ module.eks.cluster_nodegroup ]
 }
 
 # module "irsa" {
@@ -46,7 +48,7 @@ module "addon" {
 # }
 
 ################################################################################
-# albcontroller, externaldns, fluentbit 설치
+# externaldns, fluentbit 설치
 ################################################################################
 
 module "common" {
@@ -58,7 +60,7 @@ module "common" {
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 	acm_arn = data.aws_acm_certificate.acm.id
 
-	depends_on = [ module.addon ]
+	depends_on = [ module.addon.alb_controller ]
 }
 
 ################################################################################
