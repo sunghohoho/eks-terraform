@@ -15,20 +15,25 @@ terraform
 ├── README.md
 ├── dev
 │   ├── data.tf
-│   ├── eks.tf      # eks 클러스터 생성
+│   ├── eks.tf
+│   ├── errored.tfstate
+│   ├── ingress1.yaml
 │   ├── local.tf
-│   ├── network.tf  # vpc 생성
+│   ├── network.tf
 │   └── provider.tf
 ├── error.md
 ├── modules
-│   ├── addon   # vpc cni, ebs csi, coredns, kube-proxy
+│   ├── addon
 │   │   ├── eks-addon.tf
+│   │   ├── outputs.tf
 │   │   └── variables.tf
 │   ├── common
 │   │   ├── alb-controller.tf
+│   │   ├── argocd.tf
 │   │   ├── external-dns.tf
 │   │   ├── fluent-bit.tf
 │   │   ├── helm-values
+│   │   │   ├── argocd.yaml
 │   │   │   ├── fluent-bit-values.yaml
 │   │   │   ├── kube-prometheus-stack.yaml
 │   │   │   └── kubeopsview-values.yaml
@@ -43,7 +48,7 @@ terraform
 │   │   ├── oidc.tf
 │   │   ├── outputs.tf
 │   │   └── variables.tf
-│   ├── irsa    # 미사용
+│   ├── irsa
 │   │   ├── alb-controller-irsa.tf
 │   │   ├── external-dns-irsa.tf
 │   │   ├── irsa.tf
