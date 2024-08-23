@@ -16,4 +16,5 @@ resource "helm_release" "prometheus_grafana" {
       cert_arn = var.acm_arn
     })
   ]
+  depends_on = [ helm_release.alb_controller ]
 }

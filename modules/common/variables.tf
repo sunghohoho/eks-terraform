@@ -2,15 +2,10 @@ variable "cluster_name" {
   type = string
 }
 
-# variable "alb_namespace" {
-#   type = string
-#   default = "kube-system"
-# }
-
-# variable "alb_service_name" {
-#   type = string
-#   default = "aws-load-balancer-controller"
-# }
+variable "eks_version" {
+  description = "eks version"
+  type = string
+}
 
 variable "exdns_service_account" {
   type = string

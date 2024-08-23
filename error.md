@@ -142,6 +142,10 @@ finalizers:
 {"level":"error","ts":"2024-08-11T12:31:17Z","logger":"setup","msg":"unable to create controller","controller":"TargetGroupBinding","error":"no matches for kind \"TargetGroupBinding\" in version \"elbv2.k8s.aws/v1beta1\""}
 
 crd를 강제로 삭제해서 이도저도 못하는 상황
+
+-->
+https://itnext.io/modify-helm-3-release-manifest-c3870b90213?gi=9b37587653d5
+helm manifest를 수정하거나, helm으로 대충 설치하고 삭제하니까 정상화됨??
 ```
 
 10. 최초 실행시 발생하는 에러
@@ -213,4 +217,11 @@ Warning: Helm release "external-dns" was created but has a failed status. Use th
 │   on ../modules/common/prometheus.tf line 7, in resource "helm_release" "prometheus_grafana":
 │    7: resource "helm_release" "prometheus_grafana" {
 │ 
+ dependson 잘 걸어주기
 ```
+
+11.
+```yaml
+삭제 시 node가 먼저 삭제가되어 alb controller 파드가 비정상적으로 pending 이 되어 다른 리소스가 삭제가 되지 않음
+```
+

@@ -16,4 +16,6 @@ resource "helm_release" "argocd" {
       cert_arn = var.acm_arn
     })
   ]
+
+  depends_on = [ helm_release.alb_controller ]
 }

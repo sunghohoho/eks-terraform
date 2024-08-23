@@ -22,3 +22,11 @@ output "cluster_identity_oidc_arn" {
 output "cluster_nodegroup" {
   value = aws_eks_node_group.this.id
 }
+
+output "cluster_version" {
+  value = aws_eks_cluster.this.version
+}
+
+output "nodegroup_version" {
+  value = aws_eks_node_group.this.version
+}
