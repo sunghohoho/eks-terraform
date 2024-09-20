@@ -1,0 +1,6 @@
+ingressRoute:
+  dashboard: 
+    enabled: true
+
+service:
+  type: NodePort
