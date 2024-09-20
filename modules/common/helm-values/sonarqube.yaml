@@ -1,0 +1,12 @@
+ingress:
+  enabled: true
+  hosts:
+    - name: sonarqube.gguduck.com
+      path: "/*"
+  annotations:
+      alb.ingress.kubernetes.io/load-balancer-name: sonarqube
+      alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      external-dns.alpha.kubernetes.io/hostname: sonarqube.gguduck.com
+  ingressClassName: alb

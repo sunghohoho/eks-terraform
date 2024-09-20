@@ -64,3 +64,13 @@ variable "argocd-chart-version" {
   type = string
   default = "7.4.3"
 }
+
+variable "sonarqube-chart-version" {
+  type = string
+  default = "10.6.0"
+}
+
+variable "nexus-chart-version" {
+  type = string
+  default = "3.64.0"
+}
