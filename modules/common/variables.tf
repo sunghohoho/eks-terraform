@@ -72,5 +72,5 @@ variable "sonarqube-chart-version" {
 
 variable "nexus-chart-version" {
   type = string
-  default = "3.64.0"
+  default = "64.2.0"
 }

@@ -2,9 +2,10 @@ ingress:
   enabled: true
   ingressClassName: alb
   hostPath: /
-    annotations:
-      alb.ingress.kubernetes.io/load-balancer-name: nexus
-      alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/target-type: ip
-      external-dns.alpha.kubernetes.io/hostname: nexus.gguduck.com
+  hostRepo: "nexus.gguduck.com"
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: nexus
+    alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    external-dns.alpha.kubernetes.io/hostname: nexus.gguduck.com
