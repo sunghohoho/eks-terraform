@@ -318,7 +318,7 @@ resource "helm_release" "alb_controller" {
 
   values = [
     <<EOV
-clusterName: ${var.cluster_name}
+clusterName: "${var.cluster_name}-cluster"
 serviceAccount:
   create: true
   annotations: 
@@ -332,6 +332,7 @@ resources:
     memory: 128Mi
 EOV
   ]
+  depends_on = [ aws_eks_node_group.this ]
 }
 # 중복나서 network에서부터 태깅
 # alb 컨트롤러 tag 변경하기

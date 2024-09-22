@@ -20,6 +20,9 @@ module "eks" {
 	nodegroup_des = 3
 	is_pdb_ignore = true
 
+	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
+	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
+
 	#oidc = ["gitaction"]
 	#/eks-terraform/modules/eks/oidc 구성 확인하기
 
@@ -27,18 +30,9 @@ module "eks" {
 
 }
 
-################################################################################
-# addon 구성 (vpc cni, ebs csi, kube proxy, coreDNS, albcontroller)
-################################################################################
-# module "addon" {
-# 	source = "../modules/addon"
-# 	cluster_name = module.eks.cluster_name
-# 	eks_version = module.eks.cluster_version
-# }
-
 
 ################################################################################
-# externaldns, fluentbit 설치
+# 오픈소스 설치
 ################################################################################
 
 module "common" {
@@ -51,7 +45,7 @@ module "common" {
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 	acm_arn = data.aws_acm_certificate.acm.id
 	
-	# depends_on = [ module.addon ]
+	depends_on = [ module.eks.nodegroup_id ]
 }
 
 ################################################################################

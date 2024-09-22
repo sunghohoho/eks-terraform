@@ -30,3 +30,7 @@ output "cluster_version" {
 output "nodegroup_version" {
   value = aws_eks_node_group.this.version
 }
+
+output "nodegroup_id" {
+  value = aws_eks_node_group.this.id
+}

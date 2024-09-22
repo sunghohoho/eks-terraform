@@ -12,11 +12,9 @@ data "aws_eks_addon_version" "vpc_cni_version" {
 
 # vpc-cni addon 설치
 resource "aws_eks_addon" "vpc_cni" {
-  cluster_name = "${var.cluster_name}"
+  cluster_name = "${var.cluster_name}-cluster"
   addon_name   = "vpc-cni"
   addon_version = data.aws_eks_addon_version.vpc_cni_version.version
-
-  depends_on = [  ]
 }
 
 
@@ -30,10 +28,12 @@ data "aws_eks_addon_version" "core_dns_version" {
 
 # core-dns addon 설치
 resource "aws_eks_addon" "core_dns" {
-  cluster_name                = "${var.cluster_name}"
+  cluster_name                = "${var.cluster_name}-cluster"
   addon_name                  = "coredns"
   addon_version               = data.aws_eks_addon_version.core_dns_version.version
   resolve_conflicts_on_update = "PRESERVE"
+
+  depends_on = [ aws_eks_node_group.this ]
 }
 
 
@@ -47,7 +47,7 @@ data "aws_eks_addon_version" "kube_proxy_version" {
 
 # kube-proxy addon 설치
 resource "aws_eks_addon" "kube_proxy" {
-  cluster_name                = "${var.cluster_name}"
+  cluster_name                = "${var.cluster_name}-cluster"
   addon_name                  = "kube-proxy"
   addon_version = data.aws_eks_addon_version.kube_proxy_version.version
 }
@@ -63,11 +63,13 @@ data "aws_eks_addon_version" "ebs_csi_version" {
 
 # ebs-csi 드라이버 설치
 resource "aws_eks_addon" "ebs_csi_controller" {
-  cluster_name                = "${var.cluster_name}"
+  cluster_name                = "${var.cluster_name}-cluster"
   addon_name                  = "aws-ebs-csi-driver"
   addon_version               = data.aws_eks_addon_version.ebs_csi_version.version
   # resolve_conflicts_on_update = "OVERWRITE"
   # resolve_conflicts_on_create = "OVERWRITE"
+
+  depends_on = [ aws_eks_node_group.this ]
 }
 
 ################################################################################

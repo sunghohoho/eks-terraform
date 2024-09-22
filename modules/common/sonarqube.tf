@@ -16,6 +16,4 @@ resource "helm_release" "sonarqube" {
     cert_arn = var.acm_arn
     })
   ]
-
-  depends_on = [ helm_release.alb_controller ]
 }
