@@ -309,6 +309,7 @@ resource "aws_iam_role_policy_attachment" "alb_controller_role_att" {
 
 # helm chart 구성하기, https://artifacthub.io/packages/helm/aws/aws-load-balancer-controller
 resource "helm_release" "alb_controller" {
+  count = var.enable_alb ? 1 : 0 
   name       = "aws-load-balancer-controller"
   chart      = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"

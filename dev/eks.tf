@@ -45,7 +45,7 @@ module "common" {
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 	acm_arn = data.aws_acm_certificate.acm.id
 	
-	depends_on = [ module.eks.nodegroup_id ]
+	depends_on = [ module.eks ]
 }
 
 ################################################################################
