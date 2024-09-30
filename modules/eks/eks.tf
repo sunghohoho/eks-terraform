@@ -42,6 +42,10 @@ resource "aws_security_group" "this" {
 
   description = "control communications from the Kubernetes control plane to compute resources in your account."
   vpc_id      = var.vpc_id
+
+  tags = {
+    "karpenter.sh/discovery" = "${var.cluster_name}-cluster"
+  }
 }
 
 ################################################################################

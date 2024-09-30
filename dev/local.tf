@@ -7,6 +7,7 @@ locals {
     env = "dev"
     part = local.project
   }
+  partition ="aws"
 }
 
 locals {

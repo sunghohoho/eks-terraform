@@ -110,7 +110,22 @@ resource "kubernetes_storage_class" "gp3" {
     type                      = "gp3"
     encrypted                 = true
   }
-  
   depends_on = [ aws_eks_addon.ebs_csi_controller ]
 }
 
+
+
+# 05
+# pod identity 최신 버전 가져오기
+data "aws_eks_addon_version" "pod_identity" {
+  addon_name         = "eks-pod-identity-agent"
+  kubernetes_version = var.eks_version
+  most_recent        = true
+}
+
+# pod identity addon 설치
+resource "aws_eks_addon" "pod_identity" {
+  cluster_name = "${var.cluster_name}-cluster"
+  addon_name   = "eks-pod-identity-agent"
+  addon_version = data.aws_eks_addon_version.pod_identity.version
+}

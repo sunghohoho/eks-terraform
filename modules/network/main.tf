@@ -37,7 +37,8 @@ resource "aws_subnet" "public" {
     "${var.project}-pub-subnet-%s",
     substr(var.azs[count.index], -1, 1)
     ),
-    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/role/elb" = "1",
+    "karpenter.sh/discovery" = "${var.project}-cluster"
   }
 }
 

@@ -35,18 +35,18 @@ module "eks" {
 # 오픈소스 설치
 ################################################################################
 
-module "common" {
-	source = "../modules/common"
-	eks_version = module.eks.cluster_version
-	cluster_name = module.eks.cluster_name
-	public = module.vpc.public_subnet_ids
-	private = module.vpc.private_subnet_ids
-	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
-	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
-	acm_arn = data.aws_acm_certificate.acm.id
+# module "common" {
+# 	source = "../modules/common"
+# 	eks_version = module.eks.cluster_version
+# 	cluster_name = module.eks.cluster_name
+# 	public = module.vpc.public_subnet_ids
+# 	private = module.vpc.private_subnet_ids
+# 	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
+# 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
+# 	acm_arn = data.aws_acm_certificate.acm.id
 	
-	depends_on = [ module.eks ]
-}
+# 	depends_on = [ module.eks ]
+# }
 
 ################################################################################
 # 테스트 애플리케이션 실행, https://soojae.tistory.com/89 match labels 보기
