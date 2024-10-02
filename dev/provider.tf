@@ -13,7 +13,7 @@ terraform {
     # aws 버전
     aws = {
       source  = "hashicorp/aws"
-      version = "5.40.0"
+      version = "5.61.0"
     }
     # kubectl 버전
     kubectl = {
