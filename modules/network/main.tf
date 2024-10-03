@@ -38,7 +38,7 @@ resource "aws_subnet" "public" {
     substr(var.azs[count.index], -1, 1)
     ),
     "kubernetes.io/role/elb" = "1",
-    "karpenter.sh/discovery" = "${var.project}-cluster"
+    "karpenter.sh/discovery" = "${var.project}"
   }
 }
 
