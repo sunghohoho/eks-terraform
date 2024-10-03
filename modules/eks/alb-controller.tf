@@ -331,6 +331,7 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
+vpcId: "${var.vpcId}"
 EOV
   ]
   depends_on = [ aws_eks_node_group.this ]

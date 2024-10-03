@@ -90,10 +90,14 @@ variable "oidc_provider_arn" {
 
 variable "alb_controller_chart_version" {
   type = string
-  default = "1.8.1"
+  default = "1.8.4"
 }
 
 variable "enable_alb" {
   type = bool
   default = true
+}
+
+variable "vpcId" {
+  type = string
 }

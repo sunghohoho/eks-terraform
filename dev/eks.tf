@@ -19,6 +19,7 @@ module "eks" {
 	nodegroup_max = 6
 	nodegroup_des = 3
 	is_pdb_ignore = true
+	vpcId = module.vpc.vpc_id
 
 	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
