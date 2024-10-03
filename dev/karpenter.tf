@@ -89,7 +89,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
@@ -118,14 +118,14 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
     condition {
       test     = "StringEquals"
       variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}-cluster"]
+      values   = ["${local.project}"]
     }
 
     condition {
@@ -149,14 +149,14 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
     condition {
       test     = "StringEquals"
       variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}-cluster"]
+      values   = ["${local.project}"]
     }
 
     condition {
@@ -183,7 +183,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
@@ -196,7 +196,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     condition {
       test     = "StringEqualsIfExists"
       variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}-cluster"]
+      values   = ["${local.project}"]
     }
 
     condition {
@@ -224,7 +224,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
@@ -298,14 +298,14 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
     condition {
       test     = "StringEquals"
       variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}-cluster"]
+      values   = ["${local.project}"]
     }
 
     condition {
@@ -328,7 +328,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
@@ -340,14 +340,14 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}-cluster}"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}}"
       values   = ["owned"]
     }
 
     condition {
       test     = "StringEquals"
       variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}-cluster"]
+      values   = ["${local.project}"]
     }
 
     condition {
@@ -380,7 +380,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}-cluster"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
       values   = ["owned"]
     }
 
@@ -405,7 +405,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
   statement {
     sid       = "AllowAPIServerEndpointDiscovery"
-    resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${local.project}-cluster"]
+    resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${local.project}"]
     actions   = ["eks:DescribeCluster"]
   }
 }
@@ -456,7 +456,7 @@ resource "kubernetes_namespace" "karpenter" {
 }
 
 resource "aws_eks_pod_identity_association" "karpenter" {
-  cluster_name    = "${local.project}-cluster"
+  cluster_name    = "${local.project}"
   namespace       = kubernetes_namespace.karpenter.metadata[0].name
   service_account = kubernetes_service_account.karpenter.metadata[0].name
   role_arn        = aws_iam_role.controller.arn
@@ -607,7 +607,7 @@ resource "helm_release" "karpenter" {
   values = [
     templatefile("${path.module}/karpenter-values.yaml", {
       serviceaccount = kubernetes_service_account.karpenter.metadata[0].name
-      clustername = "${local.project}-cluster"
+      clustername = "${local.project}"
       sqs = aws_sqs_queue.this.name
     })
   ]

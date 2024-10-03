@@ -319,7 +319,7 @@ resource "helm_release" "alb_controller" {
 
   values = [
     <<EOV
-clusterName: "${var.cluster_name}-cluster"
+clusterName: "${var.cluster_name}"
 serviceAccount:
   create: true
   annotations: 

@@ -53,7 +53,7 @@ resource "aws_security_group" "this" {
 ################################################################################
 # eks 생성
 resource "aws_eks_cluster" "this" {
-  name = "${var.cluster_name}-cluster"
+  name = "${var.cluster_name}"
   # version이라는 특정 명칭에 제한이 걸려 eks_version으로 변수 선언
   version = "${var.eks_version}"
 
@@ -76,9 +76,10 @@ resource "aws_eks_cluster" "this" {
   }
 
   # master 노드 로깅 설정
-  enabled_cluster_log_types = ["api","controllerManager","scheduler"]
+  # enabled_cluster_log_types = ["api","controllerManager","scheduler"]
 
-  depends_on = [ aws_iam_role.eks_service_role, aws_cloudwatch_log_group.this ]
+  # depends_on = [ aws_iam_role.eks_service_role, aws_cloudwatch_log_group.this ]
+  depends_on = [ aws_iam_role.eks_service_role ]
 }
 
 # resource "aws_cloudwatch_log_group" "this" {

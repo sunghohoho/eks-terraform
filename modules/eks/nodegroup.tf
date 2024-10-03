@@ -66,7 +66,7 @@ output "release_version" {
 ################################################################################
 # 노드 그룹 생성
 resource "aws_eks_node_group" "this" {
-  cluster_name = "${var.cluster_name}-cluster"
+  cluster_name = "${var.cluster_name}"
   node_group_name = "${var.cluster_name}-nodegroup"
   node_role_arn = aws_iam_role.this.arn
   subnet_ids = var.nodegroup_subnets
