@@ -44,7 +44,7 @@ resource "aws_security_group" "this" {
   vpc_id      = var.vpc_id
 
   tags = {
-    "karpenter.sh/discovery" = "${var.cluster_name}-cluster"
+    "karpenter.sh/discovery" = "${var.cluster_name}"
   }
 }
 
@@ -81,7 +81,7 @@ resource "aws_eks_cluster" "this" {
   depends_on = [ aws_iam_role.eks_service_role, aws_cloudwatch_log_group.this ]
 }
 
-resource "aws_cloudwatch_log_group" "this" {
-  name              = "/aws/eks/${var.cluster_name}/cluster"
-  retention_in_days = 30
-}
+# resource "aws_cloudwatch_log_group" "this" {
+#   name              = "/aws/eks/${var.cluster_name}/cluster"
+#   retention_in_days = 30
+# }
