@@ -34,3 +34,11 @@ output "nodegroup_version" {
 output "nodegroup_id" {
   value = aws_eks_node_group.this.id
 }
+
+output "cluster_sg_id" {
+  value = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
+}
+
+output "karpenter_node_role_name" {
+  value = aws_iam_role.karpenter-node.name
+}
