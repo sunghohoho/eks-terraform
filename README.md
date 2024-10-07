@@ -9,6 +9,13 @@ myeks AWS Infrastructure as Code(IaC)
 - EKS : Backend & SD API Serving
 - [Option] ECR : Container Registry
 
+## EKS 구성도
+  - Cluster
+  - Node (Managed NodeGroup, Karpenter)
+  - Addon (VPC CNI, Kube-Proxy, EBS CSI Driver, CoreDNS, Pod Identity)
+  - Ingress Controller (AWS LoadBalancer Controller, Traefik)
+  - Common (ArgoCD, ExternalDNS, Fluent-bit, Metric Server, Nexus, PromStack, Sonarqube)
+
 ## Terraform Folder Structure
 ```
 terraform
