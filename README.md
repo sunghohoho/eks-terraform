@@ -16,45 +16,44 @@ terraform
 ├── dev
 │   ├── data.tf
 │   ├── eks.tf
-│   ├── errored.tfstate
-│   ├── ingress1.yaml
 │   ├── local.tf
+│   ├── manifest.tf
 │   ├── network.tf
 │   └── provider.tf
 ├── error.md
-├── modules
-│   ├── addon
-│   │   ├── eks-addon.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── common
-│   │   ├── alb-controller.tf
-│   │   ├── argocd.tf
-│   │   ├── external-dns.tf
-│   │   ├── fluent-bit.tf
-│   │   ├── helm-values
-│   │   │   ├── argocd.yaml
-│   │   │   ├── fluent-bit-values.yaml
-│   │   │   ├── kube-prometheus-stack.yaml
-│   │   │   └── kubeopsview-values.yaml
-│   │   ├── kubeopsview.tf
-│   │   ├── main.tf
-│   │   ├── metric.tf
-│   │   ├── prometheus.tf
-│   │   └── variables.tf
-│   ├── eks
-│   │   ├── eks.tf
-│   │   ├── nodegroup.tf
-│   │   ├── oidc.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   ├── irsa
-│   │   ├── alb-controller-irsa.tf
-│   │   ├── external-dns-irsa.tf
-│   │   ├── irsa.tf
-│   │   ├── outputs.tf
-│   │   └── variables.tf
-│   └── network
-│       ├── main.tf
-│       ├── outputs.tf
-│       └── variables.tf
+└── modules
+    ├── common
+    │   ├── argocd.tf
+    │   ├── external-dns.tf
+    │   ├── fluent-bit.tf
+    │   ├── helm-values
+    │   │   ├── argocd.yaml
+    │   │   ├── fluent-bit-values.yaml
+    │   │   ├── kube-prometheus-stack.yaml
+    │   │   ├── kubeopsview-values.yaml
+    │   │   ├── nexus.yaml
+    │   │   ├── sonarqube.yaml
+    │   │   └── traefik.yaml
+    │   ├── kubeopsview.tf
+    │   ├── main.tf
+    │   ├── metric.tf
+    │   ├── nexus.tf
+    │   ├── outputs.tf
+    │   ├── prometheus.tf
+    │   ├── sonarqube.tf
+    │   ├── trafik.tf
+    │   └── variables.tf
+    ├── eks
+    │   ├── alb-controller.tf
+    │   ├── eks-addon.tf
+    │   ├── eks.tf
+    │   ├── karpenter.tf
+    │   ├── local.tf
+    │   ├── nodegroup.tf
+    │   ├── oidc.tf
+    │   ├── outputs.tf
+    │   └── variables.tf
+    └── network
+        ├── main.tf
+        ├── outputs.tf
+        └── variables.tf
