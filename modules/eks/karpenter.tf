@@ -1,15 +1,18 @@
 # --- 0. data black ---
+data "aws_caller_identity" "current" {} 
+data "aws_region" "current" {}
+
 locals {
   account_id = data.aws_caller_identity.current.account_id
   partition = "aws"
   region = data.aws_region.current.name
+  project = var.cluster_name
 }
 
-# --- 1. karpenter node role ----
 ################################################################################
 # 1. karpenter node role
 ################################################################################
-resource "aws_iam_role" "this" {
+resource "aws_iam_role" "karpenter-node" {
   name = "${local.project}-karpenter-nodegroup-role"
 
   assume_role_policy = jsonencode({
@@ -24,50 +27,62 @@ resource "aws_iam_role" "this" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
+resource "aws_iam_role_policy_attachment" "k-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.karpenter-node.name
+  depends_on = [ aws_iam_role.karpenter-node ]
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEKS_CNI_Policy" {
+resource "aws_iam_role_policy_attachment" "k-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.karpenter-node.name
+  depends_on = [ aws_iam_role.karpenter-node ]
 }
 
-resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
+resource "aws_iam_role_policy_attachment" "k-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.karpenter-node.name
+  depends_on = [ aws_iam_role.karpenter-node ]
 }
 
 # Systems Manager 정책
-resource "aws_iam_role_policy_attachment" "eks_node-AmazonSSMManagedInstanceCore" {
+resource "aws_iam_role_policy_attachment" "k-eks_node-AmazonSSMManagedInstanceCore" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.karpenter-node.name
+  depends_on = [ aws_iam_role.karpenter-node ]
 }
 
 # EBS CSI 드라이버에서 요구되는 정책
-resource "aws_iam_role_policy_attachment" "eks_node-AmazonEBSCSIDriverPolicy" {
+resource "aws_iam_role_policy_attachment" "k-eks_node-AmazonEBSCSIDriverPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.karpenter-node.name
+  depends_on = [ aws_iam_role.karpenter-node ]
 }
 
 # EFS CSI 드라이버에서 요구되는 정책
-resource "aws_iam_role_policy_attachment" "eks_node-AmazonEFSCSIDriverPolicy" {
+resource "aws_iam_role_policy_attachment" "k-eks_node-AmazonEFSCSIDriverPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.karpenter-node.name
+  depends_on = [ aws_iam_role.karpenter-node ]
 }
 
 ################################################################################
-# 2. karpenter controller policy
+# 2. karpenter controller role
 ################################################################################
+
 data "aws_iam_policy_document" "karpenter_controller_policy" {
-    statement {
-    sid = "AllowScopedEC2InstanceAccessActions"
+
+   
+  ##  RunInstances 및 CreateFleet 작업 으로 액세스할 수 있는 EC2 리소스 집합을 식별합니다 . 
+   statement {
+    sid = "AllowScopedEC2InstanceActions"
     resources = [
-      "arn:aws:ec2:${local.region}::image/*",
-      "arn:aws:ec2:${local.region}::snapshot/*",
-      "arn:aws:ec2:${local.region}:*:security-group/*",
-      "arn:aws:ec2:${local.region}:*:subnet/*",
+      "arn:${local.partition}:ec2:*::image/*",
+      "arn:${local.partition}:ec2:*::snapshot/*",
+      "arn:${local.partition}:ec2:*:*:spot-instances-request/*",
+      "arn:${local.partition}:ec2:*:*:security-group/*",
+      "arn:${local.partition}:ec2:*:*:subnet/*",
+      "arn:${local.partition}:ec2:*:*:launch-template/*",
     ]
 
     actions = [
@@ -75,40 +90,17 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
       "ec2:CreateFleet"
     ]
   }
-
-  statement {
-    sid = "AllowScopedEC2LaunchTemplateAccessActions"
-    resources = [
-      "arn:aws:ec2:${local.region}:*:launch-template/*"
-    ]
-
-    actions = [
-      "ec2:RunInstances",
-      "ec2:CreateFleet"
-    ]
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
-      values   = ["owned"]
-    }
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:ResourceTag/karpenter.sh/nodepool"
-      values   = ["*"]
-    }
-  }
-
+  
+  ## Karpenter가 단일 EKS 클러스터에 대한 인스턴스만 생성할 수 있습니다.
   statement {
     sid = "AllowScopedEC2InstanceActionsWithTags"
     resources = [
-      "arn:aws:ec2:${local.region}:*:fleet/*",
-      "arn:aws:ec2:${local.region}:*:instance/*",
-      "arn:aws:ec2:${local.region}:*:volume/*",
-      "arn:aws:ec2:${local.region}:*:network-interface/*",
-      "arn:aws:ec2:${local.region}:*:launch-template/*",
-      "arn:aws:ec2:${local.region}:*:spot-instances-request/*",
+      "arn:${local.partition}:ec2:*:*:fleet/*",
+      "arn:${local.partition}:ec2:*:*:instance/*",
+      "arn:${local.partition}:ec2:*:*:volume/*",
+      "arn:${local.partition}:ec2:*:*:network-interface/*",
+      "arn:${local.partition}:ec2:*:*:launch-template/*",
+      "arn:${local.partition}:ec2:*:*:spot-instances-request/*",
     ]
     actions = [
       "ec2:RunInstances",
@@ -118,14 +110,8 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}"]
     }
 
     condition {
@@ -134,29 +120,24 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
       values   = ["*"]
     }
   }
-
+  
+  ## karpenter가 생성한 리소스에 대해 태깅을 가능하게 합니다
   statement {
     sid = "AllowScopedResourceCreationTagging"
     resources = [
-      "arn:aws:ec2:${local.region}:*:fleet/*",
-      "arn:aws:ec2:${local.region}:*:instance/*",
-      "arn:aws:ec2:${local.region}:*:volume/*",
-      "arn:aws:ec2:${local.region}:*:network-interface/*",
-      "arn:aws:ec2:${local.region}:*:launch-template/*",
-      "arn:aws:ec2:${local.region}:*:spot-instances-request/*",
+      "arn:${local.partition}:ec2:*:*:fleet/*",
+      "arn:${local.partition}:ec2:*:*:instance/*",
+      "arn:${local.partition}:ec2:*:*:volume/*",
+      "arn:${local.partition}:ec2:*:*:network-interface/*",
+      "arn:${local.partition}:ec2:*:*:launch-template/*",
+      "arn:${local.partition}:ec2:*:*:spot-instances-request/*",
     ]
     actions = ["ec2:CreateTags"]
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}"]
     }
 
     condition {
@@ -176,14 +157,15 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ## Karpenter가 "karpenter.sh/nodepool" 및 태그를 통해서만 작업 중인 클러스터 인스턴스의 태그를 업데이트할 수 있도록 강제합니다
   statement {
     sid       = "AllowScopedResourceTagging"
-    resources = ["arn:aws:ec2:${local.region}:*:instance/*"]
+    resources = ["arn:${local.partition}:ec2:*:*:instance/*"]
     actions   = ["ec2:CreateTags"]
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
     }
 
@@ -194,27 +176,21 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
 
     condition {
-      test     = "StringEqualsIfExists"
-      variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}"]
-    }
-
-    condition {
       test     = "ForAllValues:StringEquals"
       variable = "aws:TagKeys"
       values = [
-        "eks:eks-cluster-name",
         "karpenter.sh/nodeclaim",
         "Name",
       ]
     }
   }
 
+  ## Karpenter가 연관된 인스턴스 및 launch 템플릿만 삭제할 수 있습니다
   statement {
     sid = "AllowScopedDeletion"
     resources = [
-      "arn:aws:ec2:${local.region}:*:instance/*",
-      "arn:aws:ec2:${local.region}:*:launch-template/*"
+      "arn:${local.partition}:ec2:*:*:instance/*",
+      "arn:${local.partition}:ec2:*:*:launch-template/*"
     ]
 
     actions = [
@@ -224,7 +200,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
     }
 
@@ -235,6 +211,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ##  Karpenter 컨트롤러는 해당 AWS 지역의 모든 관련 리소스에서 이러한 읽기 전용 작업을 수행할 수 있습니다.
   statement {
     sid       = "AllowRegionalReadActions"
     resources = ["*"]
@@ -257,31 +234,34 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ## SSM parameter와 리소스 비용의 대한 정보를 가저올 수 있습니다
   statement {
     sid       = "AllowSSMReadActions"
-    resources = ["arn:aws:ssm:${local.region}::parameter/aws/service/*"]
+    resources = ["*"]
     actions   = ["ssm:GetParameter"]
   }
-
   statement {
     sid       = "AllowPricingReadActions"
     resources = ["*"]
     actions   = ["pricing:GetProducts"]
   }
 
-    statement {
+  ## Karpenter 컨트롤러가 SQS 메시지에 대해 삭제/전달/받기 등을 수행 할 수 있습니다
+  statement {
       sid       = "AllowInterruptionQueueActions"
-      resources = [try(aws_sqs_queue.this.arn)]
+      resources = ["${aws_sqs_queue.this.arn}"]
       actions = [
         "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
         "sqs:GetQueueUrl",
         "sqs:ReceiveMessage"
       ]
   }
 
+  ## 생성한 노드의 인스턴스 프로파일(Role)을 할당하기 위해 필요합니다
   statement {
     sid       = "AllowPassingInstanceRole"
-    resources = [aws_iam_role.this.arn]
+    resources = ["${aws_iam_role.karpenter-node.arn}"]
     actions   = ["iam:PassRole"]
 
     condition {
@@ -291,21 +271,16 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ##  ec2nodeclass에 지정된 역할에 따라 사용자를 대신하여 인스턴스 프로필을 생성할 수 있습니다.
   statement {
     sid       = "AllowScopedInstanceProfileCreationActions"
-    resources = ["arn:aws:iam::${local.account_id}:instance-profile/*"]
+    resources = ["*"]
     actions   = ["iam:CreateInstanceProfile"]
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}"]
     }
 
     condition {
@@ -321,14 +296,15 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ## Karpenter가 클러스터에 대해 프로비저닝하는 인스턴스 프로필에서만 태깅 작업할 수 있습니다.
   statement {
     sid       = "AllowScopedInstanceProfileTagActions"
-    resources = ["arn:${local.partition}:iam::${local.account_id}:instance-profile/*"]
+    resources = ["*"]
     actions   = ["iam:TagInstanceProfile"]
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
     }
 
@@ -340,19 +316,13 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/kubernetes.io/cluster/${local.project}}"
+      variable = "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
     }
 
     condition {
       test     = "StringEquals"
-      variable = "aws:RequestTag/eks:eks-cluster-name"
-      values   = ["${local.project}"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:RequestTag/topology.kubernetes.io/region"
+      variable = "aws:ResourceTag/topology.kubernetes.io/region"
       values   = [local.region]
     }
 
@@ -369,9 +339,10 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ## karpenter가 인스턴스 프로필을 추가/부여/삭제 할 수 있습니다
   statement {
     sid       = "AllowScopedInstanceProfileActions"
-    resources = ["arn:${local.partition}:iam::${local.account_id}:instance-profile/*"]
+    resources = ["*"]
     actions = [
       "iam:AddRoleToInstanceProfile",
       "iam:RemoveRoleFromInstanceProfile",
@@ -380,7 +351,7 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "aws:ResourceTag/kubernetes.io/cluster/${local.project}"
+      variable = "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}"
       values   = ["owned"]
     }
 
@@ -397,15 +368,16 @@ data "aws_iam_policy_document" "karpenter_controller_policy" {
     }
   }
 
+  ## 인스턴스 프로필 항목을 읽을 수 있습니다
   statement {
     sid       = "AllowInstanceProfileReadActions"
-    resources = ["arn:${local.partition}:iam::${local.account_id}:instance-profile/*"]
+    resources = ["*"]
     actions   = ["iam:GetInstanceProfile"]
   }
-
+  ## 클러스터 엔드포인트에 대해 정보를 가져올 수 있습니다
   statement {
     sid       = "AllowAPIServerEndpointDiscovery"
-    resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${local.project}"]
+    resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${var.cluster_name}"]
     actions   = ["eks:DescribeCluster"]
   }
 }
@@ -437,9 +409,8 @@ resource "aws_iam_role_policy_attachment" "karpenter_controller_att" {
 }
 
 
-# --- 3. namespace & service account & pod identity ---
 ################################################################################
-# --- 3. namespace & service account & pod identity
+# --- 3. namespace & service account & pod identity & access entires
 ################################################################################
 
 resource "kubernetes_service_account" "karpenter" {
@@ -462,9 +433,19 @@ resource "aws_eks_pod_identity_association" "karpenter" {
   role_arn        = aws_iam_role.controller.arn
 }
 
-# --- 4. sqs & eventbridge  ---
+resource "aws_eks_access_entry" "karpenternode" {
+  cluster_name  = "${local.project}"
+  principal_arn = aws_iam_role.karpenter-node.arn
+  type = "EC2_LINUX"
+
+  depends_on = [
+    # If we try to add this too quickly, it fails. So .... we wait
+    aws_sqs_queue.this
+  ]
+}
+
 ################################################################################
-# --- 4. sqs & eventbridge  ---
+# --- 4. sqs 
 ################################################################################
 
 resource "aws_sqs_queue" "this" {
@@ -520,8 +501,6 @@ resource "aws_sqs_queue_policy" "this" {
   policy    = data.aws_iam_policy_document.queue.json
 }
 
-
-# --- 5. eventbridge ---
 ################################################################################
 # --- 5. eventbridge ---
 ################################################################################
@@ -565,34 +544,35 @@ module "EventBridgeRules" {
   targets = {
     InstanceStateChangeRule = [
       {
-        name = "s"
+        name = "InstanceStateChangeRule"
         arn  = aws_sqs_queue.this.arn
       }
     ],
     SpotInterruptionRule = [
       {
-        name = "q"
+        name = "SpotInterruptionRule"
         arn  = aws_sqs_queue.this.arn
       }
     ],
     RebalanceRule = [
       {
-        name = "a"
+        name = "RebalanceRule"
         arn  = aws_sqs_queue.this.arn
       }
     ],
     ScheduledChangeRule = [
       {
-        name = "b"
+        name = "ScheduledChangeRule"
         arn  = aws_sqs_queue.this.arn
       }
     ]
+    depends_on = []
   }
 
   depends_on = [ aws_sqs_queue.this ]
 }
 
-# --- 6. karpenter ---
+
 ################################################################################
 # --- 6. karpenter ---
 ################################################################################
@@ -605,12 +585,23 @@ resource "helm_release" "karpenter" {
   namespace = kubernetes_namespace.karpenter.metadata[0].name
 
   values = [
-    templatefile("${path.module}/karpenter-values.yaml", {
-      serviceaccount = kubernetes_service_account.karpenter.metadata[0].name
-      clustername = "${local.project}"
-      sqs = aws_sqs_queue.this.name
-    })
-  ]
+    <<EOF
+serviceAcccount:
+  create: false
+  name: ${kubernetes_service_account.karpenter.metadata[0].name}
+
+settings:
+  clusterName: ${local.project}
+  interruptionQueue: ${aws_sqs_queue.this.name}
+    EOF
+  ]  
+  depends_on = [ 
+    aws_sqs_queue.this,  
+    kubernetes_service_account.karpenter,
+    kubernetes_namespace.karpenter,
+    aws_eks_pod_identity_association.karpenter,
+    aws_eks_access_entry.karpenternode
+    ]
 }
 
 # # --- 7. node class ---
@@ -634,7 +625,7 @@ resource "helm_release" "karpenter" {
 #   securityGroupSelectorTerms:
 #     - tags:
 #         karpenter.sh/discovery: "${local.project}"
-#   role: "${aws_iam_role.this.arn}"
+#   role: ${aws_iam_role.this.name}
 #   blockDeviceMappings:
 #     - deviceName: /dev/xvda
 #       ebs:
@@ -645,10 +636,10 @@ resource "helm_release" "karpenter" {
 # YAML
 # }
 
-# # # --- 8. node pool ---
-# # ################################################################################
-# # # --- 8. node pool ---
-# # ################################################################################
+# # --- 8. node pool ---
+# ################################################################################
+# # --- 8. node pool ---
+# ################################################################################
 
 # resource "kubectl_manifest" "nodepools" {
 #   yaml_body = <<YAML
@@ -693,62 +684,3 @@ resource "helm_release" "karpenter" {
 #     memory: 500Gi
 # YAML
 # }
-
-
-resource "kubectl_manifest" "nodeclass" {  
-  yaml_body = <<YAML
-apiVersion: karpenter.k8s.aws/v1
-kind: EC2NodeClass
-metadata:
-  name: default
-spec:
-  amiFamily: AL2 # Amazon Linux 2
-  role: "${aws_iam_role.this.arn}" # replace with your cluster name
-  subnetSelectorTerms:
-    - tags:
-        karpenter.sh/discovery: "${local.project}" # replace with your cluster name
-  securityGroupSelectorTerms:
-    - tags:
-        karpenter.sh/discovery: "${local.project}" # replace with your cluster name
-  amiSelectorTerms:
-    - alias: al2@latest
-YAML
-}
-
-resource "kubectl_manifest" "nodepool" {  
-  yaml_body = <<YAML
-apiVersion: karpenter.sh/v1
-kind: NodePool
-metadata:
-  name: default
-spec:
-  template:
-    spec:
-      requirements:
-        - key: kubernetes.io/arch
-          operator: In
-          values: ["amd64"]
-        - key: kubernetes.io/os
-          operator: In
-          values: ["linux"]
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["on-demand"]
-        - key: karpenter.k8s.aws/instance-category
-          operator: In
-          values: ["c", "m", "r"]
-        - key: karpenter.k8s.aws/instance-generation
-          operator: Gt
-          values: ["2"]
-      nodeClassRef:
-        group: karpenter.k8s.aws
-        kind: EC2NodeClass
-        name: default
-      expireAfter: 720h # 30 * 24h = 720h
-  limits:
-    cpu: 1000
-  disruption:
-    consolidationPolicy: WhenEmptyOrUnderutilized
-    consolidateAfter: 1m
-YAML
-}

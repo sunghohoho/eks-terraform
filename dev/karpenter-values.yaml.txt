@@ -1,0 +1,8 @@
+
+# serviceAcccount:
+#   create: false
+#   name: ${serviceaccount}
+
+# settings:
+#   clusterName: ${clustername}
+#   interruptionQueue: ${sqs}
