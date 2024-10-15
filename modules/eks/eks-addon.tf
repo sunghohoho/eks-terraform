@@ -54,6 +54,39 @@ resource "aws_eks_addon" "kube_proxy" {
 
 
 # 04
+
+# irsa 구성
+resource "aws_iam_role" "ebs-csi" {
+  name_prefix = substr("${var.cluster_name}-ebs-csi-", 0,37)
+
+  assume_role_policy = <<POLICY
+{
+   "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "${var.oidc_provider_arn}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "${var.oidc_issuer_url}:aud": "sts.amazonaws.com",
+                    "${var.oidc_issuer_url}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+                }
+            }
+        }
+    ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "ebs-csi-role_att" {
+  role       = aws_iam_role.ebs-csi.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+
 # ebs-csi 드라이버 최신버전 가져오기
 data "aws_eks_addon_version" "ebs_csi_version" {
   addon_name         = "aws-ebs-csi-driver"
@@ -66,6 +99,7 @@ resource "aws_eks_addon" "ebs_csi_controller" {
   cluster_name                = "${var.cluster_name}"
   addon_name                  = "aws-ebs-csi-driver"
   addon_version               = data.aws_eks_addon_version.ebs_csi_version.version
+  service_account_role_arn = aws_iam_role.ebs-csi.arn
   # resolve_conflicts_on_update = "OVERWRITE"
   # resolve_conflicts_on_create = "OVERWRITE"
 
