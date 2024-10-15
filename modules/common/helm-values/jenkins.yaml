@@ -1,0 +1,20 @@
+serviceAccount: 
+  create: true
+  name: jenkins
+controller:
+  admin:
+    password: "rlatjdgh123"
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    hostname: jenkins.gguduck.com
+    annotations:
+      alb.ingress.kubernetes.io/load-balancer-name: jenkins
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+      external-dns.alpha.kubernetes.io/hostname: jenkins.gguduck.com
+persistence:
+  enabled: true
+  existingClaim: "jenkins-pvc"
+  storageClass: "gp3"
