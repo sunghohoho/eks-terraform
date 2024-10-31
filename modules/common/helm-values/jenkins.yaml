@@ -1,9 +1,13 @@
 serviceAccount: 
   create: true
   name: jenkins
+persistence:
+  enabled: true
+  existingClaim: "jenkins-pvc"
+  storageClass: "gp3"
 controller:
   admin:
-    password: "rlatjdgh123"
+    password: ${server_admin_password}
   ingress:
     enabled: true
     ingressClassName: alb
@@ -14,7 +18,22 @@ controller:
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
       external-dns.alpha.kubernetes.io/hostname: jenkins.gguduck.com
-persistence:
-  enabled: true
-  existingClaim: "jenkins-pvc"
-  storageClass: "gp3"
+  additionalPlugins:
+  - github-branch-source:1807.v50351eb_7dd13
+  - job-dsl:1.89
+  - pipeline-utility-steps:2.17.0
+  - aws-credentials:231.v08a_59f17d742
+  JCasC:
+    configScripts:
+      jenkins-casc-configs: |
+        credentials:
+          system:
+            domainCredentials:
+            - credentials:
+              - usernamePassword:
+                  id: "github"
+                  description: "GitHub (sunghohoho)"
+                  scope: GLOBAL
+                  username: ${github_username}
+                  password: ${github_token}
+
