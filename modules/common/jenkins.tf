@@ -53,6 +53,9 @@ resource "helm_release" "jenkins" {
   values = [
       templatefile("${path.module}/helm-values/jenkins.yaml", {
       cert_arn = var.acm_arn
+      server_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["jenkins"]["password"]
+      github_username = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["username"]
+      github_token = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["token"]
     })
   ]
   depends_on = [ kubernetes_persistent_volume_claim.jenkins ]
