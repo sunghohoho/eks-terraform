@@ -19,6 +19,7 @@ controller:
       alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
       external-dns.alpha.kubernetes.io/hostname: jenkins.gguduck.com
   additionalPlugins:
+  - github:1.40.0
   - github-branch-source:1807.v50351eb_7dd13
   - job-dsl:1.89
   - pipeline-utility-steps:2.17.0

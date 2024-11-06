@@ -76,7 +76,20 @@ resource "aws_eks_cluster" "this" {
   depends_on = [ aws_iam_role.eks_service_role ]
 }
 
-# resource "aws_cloudwatch_log_group" "this" {
-#   name              = "/aws/eks/${var.cluster_name}/cluster"
-#   retention_in_days = 30
+# k8tz
+# resource "helm_release" "k8tz" {
+#   name       = "k8tz"
+#   repository = "https://k8tz.github.io/k8tz"
+#   chart      = "k8tz"
+#   version    = "0.17.1"
+#   namespace  = "kube-system"
+
+#   values = [
+#     <<-EOT
+#     replicaCount: 2
+#     timezone: Asia/Seoul
+#     createNamespace: false
+#     namespace: null
+#     EOT
+#   ]
 # }

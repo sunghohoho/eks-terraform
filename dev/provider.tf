@@ -18,7 +18,7 @@ terraform {
     # kubectl 버전
     kubectl = {
       source  = "alekc/kubectl"
-      version = ">= 2.0.2"
+      version = ">=2.1.2"
     }
     # helm 버전
     helm = {
@@ -43,12 +43,7 @@ provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   token                  = data.aws_eks_cluster_auth.this.token
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-  # config_path = "/Users/sungho/.kube/config"
-#   exec {
-#     api_version = "client.authentication.k8s.io/v1beta1"
-#     args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-#     command = "aws"
-#  }
+
 }
 
 data "aws_eks_cluster_auth" "this" {

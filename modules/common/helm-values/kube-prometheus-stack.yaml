@@ -1,37 +1,37 @@
-prometheus:
-  ingress:
-    enabled: true
-    ingressClassName: alb
-    annotations:
-        alb.ingress.kubernetes.io/load-balancer-name: prometheus
-        alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
-        external-dns.alpha.kubernetes.io/hostname: prom.gguduck.com
-        # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32, 222.112.86.50/32
-        # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
-    hosts: 
-      - prom.gguduck.com
-    paths:
-      - /*
+# prometheus:
+#   ingress:
+#     enabled: true
+#     ingressClassName: alb
+#     annotations:
+#         alb.ingress.kubernetes.io/load-balancer-name: prometheus
+#         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+#         alb.ingress.kubernetes.io/scheme: internet-facing
+#         alb.ingress.kubernetes.io/target-type: ip
+#         external-dns.alpha.kubernetes.io/hostname: prom.gguduck.com
+#         # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32, 222.112.86.50/32
+#         alb.ingress.kubernetes.io/success-codes: 200,404,301,302
+#     hosts: 
+#       - prom.gguduck.com
+#     paths:
+#       - /*
 
-# grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
-# https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
-grafana:
-  ingress:
-    defaultDashboardsTimezone: Asia/Seoul
-    enabled: true
-    ingressClassName: alb
-    annotations:
-        alb.ingress.kubernetes.io/load-balancer-name: grafana
-        alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-        alb.ingress.kubernetes.io/scheme: internet-facing
-        alb.ingress.kubernetes.io/target-type: ip
-        external-dns.alpha.kubernetes.io/hostname: graf.gguduck.com
-        # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32, 222.112.86.50/32
-        # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
-    hosts: 
-      - graf.gguduck.com
-    paths: 
-      - /*
+# # grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
+# # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+# grafana:
+#   ingress:
+#     defaultDashboardsTimezone: Asia/Seoul
+#     enabled: true
+#     ingressClassName: alb
+#     annotations:
+#         alb.ingress.kubernetes.io/load-balancer-name: grafana
+#         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+#         alb.ingress.kubernetes.io/scheme: internet-facing
+#         alb.ingress.kubernetes.io/target-type: ip
+#         external-dns.alpha.kubernetes.io/hostname: graf.gguduck.com
+#         # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32, 222.112.86.50/32
+#         # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
+#     hosts: 
+#       - graf.gguduck.com
+#     paths: 
+#       - /*
  

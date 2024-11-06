@@ -11,3 +11,4 @@ data "aws_acm_certificate" "acm" {
   statuses = ["ISSUED"]
   types = ["AMAZON_ISSUED"]
 }
+

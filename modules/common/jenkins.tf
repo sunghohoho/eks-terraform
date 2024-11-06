@@ -5,25 +5,6 @@ resource "kubernetes_namespace" "jenkins" {
   }
 }
 
-# resource "kubectl_manifest" "pvc" {
-#   yaml_body = <<YAML
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: jenkins-pvc
-#   namespace: jenkins
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 10Gi
-#   storageClassName: gp3
-# YAML
-
-#   depends_on = [ kubernetes_namespace.jenkins ]
-# }
-
 resource "kubernetes_persistent_volume_claim" "jenkins" {
   metadata {
     name = "jenkins-pvc"
@@ -34,7 +15,7 @@ resource "kubernetes_persistent_volume_claim" "jenkins" {
     access_modes = ["ReadWriteOnce"]
     resources {
       requests = {
-        storage = "10Gi"
+        storage = "20Gi"
       }
     }
     storage_class_name = "gp3"
@@ -51,7 +32,7 @@ resource "helm_release" "jenkins" {
   version = "5.7.5"
 
   values = [
-      templatefile("${path.module}/helm-values/jenkins.yaml", {
+    templatefile("${path.module}/helm-values/jenkins.yaml", {
       cert_arn = var.acm_arn
       server_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["jenkins"]["password"]
       github_username = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["username"]
