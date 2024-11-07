@@ -71,6 +71,11 @@ controller:
                   scope: GLOBAL
                   username: ${github_username}
                   password: ${github_token}
+              - string:
+                  id: "github-token"
+                  scope: GLOBAL
+                  description: "GitHub Token for managed hook auth"
+                  secret: ${github_token}
         jobs:
           - script: |
               pipelineJob('cats-and-dogs') {
@@ -102,5 +107,12 @@ controller:
                 }
                 disabled(false)
               }
+        unclassified:
+          githubpluginconfig:
+            configs:
+            - credentialsId: "github-token"
+              name: "sunghohoho"
+              apiUrl: "https://api.github.com"
+              manageHooks: true
 
 

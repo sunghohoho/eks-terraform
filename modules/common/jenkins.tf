@@ -24,6 +24,7 @@ resource "kubernetes_persistent_volume_claim" "jenkins" {
   depends_on = [ kubernetes_namespace.jenkins ]
 }
 
+# 내일 github-token 변수 값 변경해볼것
 resource "helm_release" "jenkins" {
   chart = "jenkins"
   name = "jenkins"
@@ -37,6 +38,7 @@ resource "helm_release" "jenkins" {
       server_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["jenkins"]["password"]
       github_username = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["username"]
       github_token = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["token"]
+      github_token_jenkins = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["jenkins_token"]
     })
   ]
   depends_on = [ kubernetes_persistent_volume_claim.jenkins ]
