@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: web-container
+        image: 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com/abc-cats:20241107.072310
+        resources:
+          requests:
+            cpu: 250m
+
+---
+
+
+
