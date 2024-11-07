@@ -73,34 +73,7 @@ controller:
                   password: ${github_token}
         jobs:
           - script: |
-              job('cats-dogs-job') {
-                description('A Jenkins job for the cats-dogs-source repository')
-                // GitHub 프로젝트 설정
-                properties {
-                  githubProjectUrl('https://github.com/sunghohoho/cats-dogs-source/')
-                }
-                // Git 소스 설정
-                scm {
-                  git {
-                    remote {
-                      url('https://github.com/sunghohoho/cats-dogs-source.git')
-                      credentials('github')
-                    }
-                    branch('*/main')
-                  }
-                }
-                // GitHub Push 트리거 설정
-                triggers {
-                  githubPush()
-                }
-                // 빌드 단계
-                steps {
-                  shell('echo "hello"')
-                }
-              }
-        jobs:
-          - script: >
-              pipelineJob('test') {
+              pipelineJob('cats-and-dogs') {
                 description('')
                 keepDependencies(false)
                 properties {
@@ -117,14 +90,14 @@ controller:
                       git {
                         remote {
                           url('https://github.com/sunghohoho/cats-dogs-source.git')
-                          credentialsId('github')
+                          credentials('github')  
                         }
-                        branches('*/main')
-                        extensions {}
+                        branch('*/main') 
+                        extensions {}  
                       }
                     }
-                    scriptPath('Jenkinsfile')
-                    lightweight(true)
+                    scriptPath('Jenkinsfile')  
+                    lightweight(true)  
                   }
                 }
                 disabled(false)
