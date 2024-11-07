@@ -41,3 +41,25 @@ resource "helm_release" "jenkins" {
   ]
   depends_on = [ kubernetes_persistent_volume_claim.jenkins ]
 }
+
+module "jenkins_pod_identity" {
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "1.4.1"
+
+  name = "jenkins"
+
+  additional_policy_arns = {
+    AmazonEC2ContainerRegistryPowerUser = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  }
+
+  associations = {
+    (var.cluster_name) = {
+      cluster_name    = var.cluster_name
+      namespace       = kubernetes_namespace.jenkins.metadata[0].name
+      service_account = helm_release.jenkins.name
+      tags = {
+        app = helm_release.jenkins.name
+      }
+    }
+  }
+}

@@ -1,10 +1,44 @@
 serviceAccount: 
   create: true
   name: jenkins
+
 persistence:
   enabled: true
   existingClaim: "jenkins-pvc"
   storageClass: "gp3"
+
+agent:
+  podTemplates:
+    kaniko: |
+      - name: kaniko
+        namespace: jenkins
+        label: kaniko
+        serviceAccount: jenkins
+        containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:debug
+          ttyEnabled: true
+          privileged: true
+          command: /busybox/cat
+    helm: |
+      - name: helm
+        namespace: jenkins
+        label: helm
+        serviceAccount: jenkins
+        containers:
+        - name: helm
+          image: alpine/helm:3.11.1
+          ttyEnabled: true
+          privileged: true
+          command: sleep
+          args: 99999999
+        - name: aws
+          image: amazon/aws-cli
+          ttyEnabled: true
+          privileged: true
+          command: sleep
+          args: 99999999  
+
 controller:
   admin:
     password: ${server_admin_password}
@@ -37,4 +71,63 @@ controller:
                   scope: GLOBAL
                   username: ${github_username}
                   password: ${github_token}
+        jobs:
+          - script: |
+              job('cats-dogs-job') {
+                description('A Jenkins job for the cats-dogs-source repository')
+                // GitHub 프로젝트 설정
+                properties {
+                  githubProjectUrl('https://github.com/sunghohoho/cats-dogs-source/')
+                }
+                // Git 소스 설정
+                scm {
+                  git {
+                    remote {
+                      url('https://github.com/sunghohoho/cats-dogs-source.git')
+                      credentials('github')
+                    }
+                    branch('*/main')
+                  }
+                }
+                // GitHub Push 트리거 설정
+                triggers {
+                  githubPush()
+                }
+                // 빌드 단계
+                steps {
+                  shell('echo "hello"')
+                }
+              }
+        jobs:
+          - script: >
+              pipelineJob('test') {
+                description('')
+                keepDependencies(false)
+                properties {
+                  githubProjectUrl('https://github.com/sunghohoho/cats-dogs-source/')
+                  pipelineTriggers {
+                    triggers {
+                      githubPush()
+                    }
+                  }
+                }
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/sunghohoho/cats-dogs-source.git')
+                          credentialsId('github')
+                        }
+                        branches('*/main')
+                        extensions {}
+                      }
+                    }
+                    scriptPath('Jenkinsfile')
+                    lightweight(true)
+                  }
+                }
+                disabled(false)
+              }
+
 
