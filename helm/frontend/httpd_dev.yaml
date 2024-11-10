@@ -1,0 +1,3 @@
+image:
+  repository: httpd
+  tag: latest

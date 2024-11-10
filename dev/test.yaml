@@ -1,3 +1,4 @@
+cat > templates/deployment.yaml <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,8 +20,157 @@ spec:
         resources:
           requests:
             cpu: 250m
+EOF
 
 ---
+cat > templates/service.yaml <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: cats-svc
+spec:
+  type: NodePort
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30007
+EOF
 
+---
+# argocd 애플리케이션 생성,
+cat <<EOF | kubectl apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
+    targetRevision: HEAD
+    path: frontend
+    helm:
+      valueFiles: 
+      - values.yaml
+  destination:
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF
+---
 
+cat <<EOF | kubectl apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apache
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
+    targetRevision: HEAD
+    path: frontend
+    helm:
+      valueFiles: 
+      - httpd_dev.yaml
+  destination:
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF
+---
+# argocd 애플리케이션 생성
+cat <<EOF | kubectl delete -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cats
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
+    targetRevision: HEAD
+    path: .
+    helm:
+      valueFiles: 
+      - values.yaml
+  destination:
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF
+---
+# 헬름 ecr로 package된 helm chart 업로드
+helm push cad-1.0.0.tgz \
+oci://866477832211.dkr.ecr.ap-northeast-2.amazonaws.com/helm-charts/
 
+---
+# ecr 로그인
+aws ecr get-login-password --region ap-northeast-2 | 
+helm registry login \
+--username AWS \
+--password-stdin 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com
+
+---
+# argocd ecr 인증을 위한 secrets 생성
+cat <<EOF | kubectl delete -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ecr-helm
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: helm
+  url: 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com
+  name: ecr-helm
+  username: AWS
+  password: $(aws ecr get-login-password --region ap-northeast-2)
+EOF
+---
+
+cat <<EOF | kubectl apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-cad
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - repoURL: 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com
+    chart: helm-charts/cad
+    targetRevision: 1.0.0
+    helm:
+      valueFiles: 
+      - \$values/values.yaml
+  - repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
+    targetRevision: HEAD
+    ref: values
+  destination:
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF

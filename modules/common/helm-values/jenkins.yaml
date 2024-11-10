@@ -7,38 +7,6 @@ persistence:
   existingClaim: "jenkins-pvc"
   storageClass: "gp3"
 
-agent:
-  podTemplates:
-    kaniko: |
-      - name: kaniko
-        namespace: jenkins
-        label: kaniko
-        serviceAccount: jenkins
-        containers:
-        - name: kaniko
-          image: gcr.io/kaniko-project/executor:debug
-          ttyEnabled: true
-          privileged: true
-          command: /busybox/cat
-    helm: |
-      - name: helm
-        namespace: jenkins
-        label: helm
-        serviceAccount: jenkins
-        containers:
-        - name: helm
-          image: alpine/helm:3.11.1
-          ttyEnabled: true
-          privileged: true
-          command: sleep
-          args: 99999999
-        - name: aws
-          image: amazon/aws-cli
-          ttyEnabled: true
-          privileged: true
-          command: sleep
-          args: 99999999  
-
 controller:
   admin:
     password: ${server_admin_password}
@@ -115,4 +83,34 @@ controller:
               apiUrl: "https://api.github.com"
               manageHooks: true
 
-
+agent:
+  podTemplates:
+    kaniko: |
+      - name: kaniko
+        namespace: jenkins
+        label: kaniko
+        serviceAccount: jenkins
+        containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:debug
+          ttyEnabled: true
+          privileged: true
+          command: /busybox/cat
+    helm: |
+      - name: helm
+        namespace: jenkins
+        label: helm
+        serviceAccount: jenkins
+        containers:
+        - name: helm
+          image: alpine/helm:3.11.1
+          ttyEnabled: true
+          privileged: true
+          command: sleep
+          args: 99999999
+        - name: aws
+          image: amazon/aws-cli
+          ttyEnabled: true
+          privileged: true
+          command: sleep
+          args: 99999999  
