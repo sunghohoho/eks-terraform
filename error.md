@@ -197,11 +197,7 @@ Warning: Helm release "external-dns" was created but has a failed status. Use th
 ╵
 ╷
 │ Error: 13 errors occurred:
-│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
-│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
-│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
-│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
-│       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
+
 │       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
 │       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
 │       * Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": no endpoints available for service "aws-load-balancer-webhook-service"
@@ -225,12 +221,63 @@ Warning: Helm release "external-dns" was created but has a failed status. Use th
 삭제 시 node가 먼저 삭제가되어 alb controller 파드가 비정상적으로 pending 이 되어 다른 리소스가 삭제가 되지 않음
 ```
 
-12,
+12, jenkins plugin down load시 network is unreachable 문제
 ```yaml
 Downloaded and validated plugin kubernetes-client-api
 Checksum valid for: kubernetes-client-api
 Nov 12, 2024 4:46:04 AM org.apache.http.impl.execchain.RetryExec execute
 INFO: I/O exception (java.net.SocketException) caught when processing request to {s}->https://mirrors.tuna.tsinghua.edu.cn:443: Network is unreachable
+Downloaded and validated plugin git
+Downloaded and validated plugin joda-time-api
+Downloaded font-awesome-api from https://ftp.yz.yamagata-u.ac.jp/pub/misc/jenkins/plugins/font-awesome-api/6.6.0-2/font-awesome-api.hpi (attempt 1 of 3)
+Checksum valid for: mina-sshd-api-common
+Downloaded caffeine-api from https://mirror.twds.com.tw/jenkins/plugins/caffeine-api/3.1.8-133.v17b_1ff2e0599/caffeine-api.hpi (attempt 1 of 3)
+Downloaded and validated plugin font-awesome-api
+Downloaded and validated plugin caffeine-api
+Checksum valid for: commons-lang3-api
+Checksum valid for: joda-time-api
+Downloaded credentials from https://repo.jing.rocks/jenkins/plugins/credentials/1384.vf0a_2ed06f9c6/credentials.hpi (attempt 1 of 3)
+Downloaded and validated plugin credentials
+Checksum valid for: git
+Downloaded pipeline-model-definition from https://mirror.twds.com.tw/jenkins/plugins/pipeline-model-definition/2.2214.vb_b_34b_2ea_9b_83/pipeline-model-definition.hpi (attempt 1 of 3)
+Downloaded and validated plugin pipeline-model-definition
+Downloaded workflow-support from https://mirror.ossplanet.net/jenkins/plugins/workflow-support/932.vb_555de1b_a_b_94/workflow-support.hpi (attempt 1 of 3)
+Downloaded and validated plugin workflow-support
+Checksum valid for: caffeine-api
+Checksum valid for: workflow-support
+Checksum valid for: font-awesome-api
+Checksum valid for: credentials
+Downloaded configuration-as-code from https://ftp.yz.yamagata-u.ac.jp/pub/misc/jenkins/plugins/configuration-as-code/1850.va_a_8c31d3158b_/configuration-as-code.hpi (attempt 1 of 3)
+Checksum valid for: pipeline-model-definition
+Downloaded and validated plugin configuration-as-code
+Downloaded plugin-util-api from https://mirror.ossplanet.net/jenkins/plugins/plugin-util-api/5.1.0/plugin-util-api.hpi (attempt 1 of 3)
+Downloaded and validated plugin plugin-util-api
+Checksum valid for: plugin-util-api
+Checksum valid for: configuration-as-code
+Downloaded prism-api from https://mirror.ossplanet.net/jenkins/plugins/prism-api/1.29.0-18/prism-api.hpi (attempt 1 of 3)
+Downloaded pipeline-groovy-lib from https://mirror.twds.com.tw/jenkins/plugins/pipeline-groovy-lib/744.v5b_556ee7c253/pipeline-groovy-lib.hpi (attempt 1 of 3)
+Downloaded and validated plugin prism-api
+Downloaded and validated plugin pipeline-groovy-lib
+Checksum valid for: prism-api
+Checksum valid for: pipeline-groovy-lib
+Downloaded apache-httpcomponents-client-4-api from https://repo.jing.rocks/jenkins/plugins/apache-httpcomponents-client-4-api/4.5.14-208.v438351942757/apache-httpcomponents-client-4-api.hpi (attempt 1 of 3)
+Downloaded and validated plugin apache-httpcomponents-client-4-api
+Downloaded okhttp-api from https://ftp.yz.yamagata-u.ac.jp/pub/misc/jenkins/plugins/okhttp-api/4.11.0-172.vda_da_1feeb_c6e/okhttp-api.hpi (attempt 1 of 3)
+Downloaded and validated plugin okhttp-api
+Checksum valid for: apache-httpcomponents-client-4-api
+Checksum valid for: okhttp-api
+Downloaded git-client from https://repo.jing.rocks/jenkins/plugins/git-client/5.0.0/git-client.hpi (attempt 1 of 3)
+Downloaded and validated plugin git-client
+Checksum valid for: git-client
+Downloaded jackson2-api from https://ftp.yz.yamagata-u.ac.jp/pub/misc/jenkins/plugins/jackson2-api/2.17.0-379.v02de8ec9f64c/jackson2-api.hpi (attempt 1 of 3)
+Downloaded and validated plugin jackson2-api
+Downloaded durable-task from https://repo.jing.rocks/jenkins/plugins/durable-task/577.v2a_8a_4b_7c0247/durable-task.hpi (attempt 1 of 3)
+Downloaded and validated plugin durable-task
+Checksum valid for: jackson2-api
+Checksum valid for: durable-task
+Downloaded kubernetes-client-api from https://ftp.yz.yamagata-u.ac.jp/pub/misc/jenkins/plugins/kubernetes-client-api/6.10.0-240.v57880ce8b_0b_2/kubernetes-client-api.hpi (attempt 1 of 3)
+Downloaded and validated plugin kubernetes-client-api
+Checksum valid for: kubernetes-client-api
 ```
 
 13,
