@@ -225,3 +225,15 @@ Warning: Helm release "external-dns" was created but has a failed status. Use th
 삭제 시 node가 먼저 삭제가되어 alb controller 파드가 비정상적으로 pending 이 되어 다른 리소스가 삭제가 되지 않음
 ```
 
+12,
+```yaml
+Downloaded and validated plugin kubernetes-client-api
+Checksum valid for: kubernetes-client-api
+Nov 12, 2024 4:46:04 AM org.apache.http.impl.execchain.RetryExec execute
+INFO: I/O exception (java.net.SocketException) caught when processing request to {s}->https://mirrors.tuna.tsinghua.edu.cn:443: Network is unreachable
+```
+
+13,
+```yaml
+terraform 에서 argocd applicaiton resource 사용하는 경우 권한문제
+```
