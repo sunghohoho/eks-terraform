@@ -25,6 +25,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.12.1"
     }
+    # argocd = {
+    #   source  = "jojand/argocd"
+    #   version = ">=2.3.2"
+    # }
   }
 
   # tf state를 보관할 백엔드 구성
@@ -66,3 +70,10 @@ provider "helm" {
   }
   debug = true
 }
+
+# # https://github.com/argoproj-labs/terraform-provider-argocd/blob/main/examples/provider/provider.tf
+# provider "argocd" {
+#   server_addr = "argocd.gguduck.com:443"
+#   username = "admin"
+#   password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["argocd"]["password"]
+# }
