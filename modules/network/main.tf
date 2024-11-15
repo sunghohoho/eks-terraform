@@ -106,27 +106,27 @@ resource "aws_route_table_association" "private" {
 }
 
 # nat에 부여할 eip 생성
-resource "aws_eip" "this" {
-  tags = {
-    "Name" = "${var.project}-eip"
-  }
-}
+# resource "aws_eip" "this" {
+#   tags = {
+#     "Name" = "${var.project}-eip"
+#   }
+# }
 
-# nat gateway 생성
-resource "aws_nat_gateway" "this" {
-  allocation_id = aws_eip.this.id
-  subnet_id = aws_subnet.public[0].id 
+# # nat gateway 생성
+# resource "aws_nat_gateway" "this" {
+#   allocation_id = aws_eip.this.id
+#   subnet_id = aws_subnet.public[0].id 
 
-  tags = {
-    "Name" = "${var.project}-nat-gw"
-  }
-}
+#   tags = {
+#     "Name" = "${var.project}-nat-gw"
+#   }
+# }
 
-# 프라이빗 서브넷에 0.0.0.0에 대한 nat 추가
-resource "aws_route" "nat" {
-  count = length(var.azs)
+# # 프라이빗 서브넷에 0.0.0.0에 대한 nat 추가
+# resource "aws_route" "nat" {
+#   count = length(var.azs)
 
-  route_table_id = aws_route_table.private[count.index].id 
-  gateway_id = aws_nat_gateway.this.id
-  destination_cidr_block = "0.0.0.0/0"
-}
+#   route_table_id = aws_route_table.private[count.index].id 
+#   gateway_id = aws_nat_gateway.this.id
+#   destination_cidr_block = "0.0.0.0/0"
+# }
