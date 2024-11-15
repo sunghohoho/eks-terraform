@@ -12,3 +12,6 @@ data "aws_acm_certificate" "acm" {
   types = ["AMAZON_ISSUED"]
 }
 
+data "aws_secretsmanager_secret_version" "this" {
+  secret_id = "myeks-secrets"
+}
