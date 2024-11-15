@@ -8,6 +8,10 @@ persistence:
   storageClass: "gp3"
 
 controller:
+  # initContainerEnv:
+  #   - name: JAVA_OPTS
+  #     value: "-Dhudson.model.UpdateCenter.xmlUrl=https://updates.jenkins.io/update-center.json"
+  updateCenterUrl: "https://updates.jenkins.io/update-center.json"
   admin:
     password: ${server_admin_password}
   ingress:
@@ -25,7 +29,7 @@ controller:
   - github-branch-source:1807.v50351eb_7dd13
   - job-dsl:1.89
   - pipeline-utility-steps:2.17.0
-  - aws-credentials:231.v08a_59f17d742
+  - dark-theme:479.v661b_1b_911c01
   JCasC:
     configScripts:
       jenkins-casc-configs: |
