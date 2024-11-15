@@ -1,3 +1,7 @@
+controller:
+  create: false
+  name: ${argocd_sa}
+
 configs:
   secret:
     argocdServerAdminPassword: ${server_admin_password}
