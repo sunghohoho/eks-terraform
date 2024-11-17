@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cats
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cats
+  template:
+    metadata:
+      labels:
+        app: cats
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: cats-container
+        image: 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com/abc-cats:20241107.072310
+        resources:
+          requests:
+            cpu: 250m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dogs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dogs
+  template:
+    metadata:
+      labels:
+        app: dogs
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: dogs-container
+        image: 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com/abc-dogs:20241107.072310
+        resources:
+          requests:
+            cpu: 250m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webs
+  template:
+    metadata:
+      labels:
+        app: webs
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: webs-container
+        image: 866477832211.dkr.ecr.ap-northeast-2.amazonaws.com/abc-webs:20241107.072310
+        resources:
+          requests:
+            cpu: 250m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cats-svc
+  labels:
+    app: cats
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: cats
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dogs-svc
+  labels:
+    app: dogs
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: dogs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webs-svc
+  labels:
+    app: webs
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: webs
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:866477832211:certificate/91db58e2-f929-44d2-b194-f6fa6be7f9cb
+    alb.ingress.kubernetes.io/load-balancer-name: cad
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    external-dns.alpha.kubernetes.io/hostname: cad.gguduck.com
+  labels:
+    app.kubernetes.io/instance: cad
+    app.kubernetes.io/name: cad
+  name: cad
+  namespace: default
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: webs-svc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: cats-svc
+            port:
+              number: 80
+        path: /cats/
+        pathType: Prefix
+      - backend:
+          service:
+            name: dogs-svc
+            port:
+              number: 80
+        path: /dogs/
+        pathType: Prefix
+        
