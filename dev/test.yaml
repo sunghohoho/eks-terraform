@@ -213,3 +213,14 @@ spec:
   sourceRepos:
   - '*'
 EOF
+
+---
+
+argocd repo add https://github.com/sunghohoho/cad-helm-values \
+--username sunghohoho --password ghp --insecure-skip-server-verification
+
+  # Add a private Helm repository named 'stable' via HTTPS
+  argocd repo add https://charts.helm.sh/stable --type helm --name stable --username test --password test
+
+  # Add a private Helm OCI-based repository named 'stable' via HTTPS
+  argocd repo add helm-oci-registry.cn-zhangjiakou.cr.aliyuncs.com --type helm --name stable --enable-oci --username test --password test
