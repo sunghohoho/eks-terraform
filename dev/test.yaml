@@ -92,30 +92,7 @@ spec:
 EOF
 ---
 # argocd 애플리케이션 생성
-cat <<EOF | kubectl delete -f -
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: cats
-  namespace: argocd
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
-    targetRevision: HEAD
-    path: .
-    helm:
-      valueFiles: 
-      - values.yaml
-  destination:
-    name: in-cluster
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-EOF
+c
 ---
 # 헬름 ecr로 package된 helm chart 업로드
 helm push cad-1.0.0.tgz \
@@ -173,4 +150,66 @@ spec:
   syncPolicy:
     automated:
       prune: true
+EOF
+
+--
+cat <<EOF | kubectl delete -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cad
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
+    targetRevision: HEAD
+    path: .
+    helm:
+      valueFiles: 
+      - values.yaml
+  destination:
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF
+
+---
+
+argocd app create cad \
+--project default \
+--repo https://github.com/sunghohoho/cats-and-dogs-helm \
+--path . \
+--dest-namespace default \
+--dest-server https://kubernetes.default.svc \
+--revision HEAD \
+--values values.yaml \
+--sync-policy automated \
+--self-heal \
+--auto-prune
+
+
+つO υ Oつ
+ʅʕ•ᴥ•ʔʃ
+
+---
+cat <<EOF | kubectl apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata: 
+  name: sample-project
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: "*"
+    kind: "*"
+  destinations:
+  - namespace: default
+    server: https://kubernetes.default.svc
+  orphanedResources:
+    warn: false
+  sourceRepos:
+  - '*'
 EOF
