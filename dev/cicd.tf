@@ -1,29 +1,3 @@
-# 테스트 argocd applicaiton
-# resource "kubectl_manifest" "argocd_app" {
-#   yaml_body =  <<EOF
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: cad
-#   namespace: argocd
-# spec:
-#   project: default
-#   source:
-#     repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
-#     targetRevision: HEAD
-#     path: .
-#     helm:
-#       valueFiles: 
-#       - values.yaml
-#   destination:
-#     name: in-cluster
-#     namespace: default
-#   syncPolicy:
-#     automated:
-#       prune: true
-# EOF
-# }
-
 # argocd cluster 등록에 사용하는 secret
 resource "kubernetes_secret_v1" "test" {
   metadata {
@@ -121,7 +95,7 @@ resource "kubernetes_secret_v1" "private-git-repo-values" {
 
 # https://medium.com/@281332/argocd-access-to-aws-ecr-for-helm-oci-external-secrets-operator-c850d3461f5f
 # ArgoCD ECR Updater | https://github.com/karlderkaefer/argocd-ecr-updater
-# ecr 등록
+# argocd ecr helm oci 등록
 resource "kubernetes_secret_v1" "private-helm-repo-chart" {
   metadata {
     name      = "private-helm-repo-chart"
@@ -140,6 +114,36 @@ resource "kubernetes_secret_v1" "private-helm-repo-chart" {
     type: "helm"
     url: jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]
     username: "AWS"
-    password: "$(aws ecr get-login-password --region ap-northeast-2)"
+    password: ""
   }
+}
+
+resource "kubectl_manifest" "argocd_app_multi" {
+  yaml_body =  <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cad-multi
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
+      chart: cad
+      targetRevision: 1.0.0
+      helm:
+        valueFiles:
+        - $values/dev-values.yaml
+    - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["helm-values"]}
+      targetRevision: HEAD
+      ref: values
+  destination: 
+    name: in-cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF
+
+depends_on = [ kubectl_manifest.argocd_project ]
 }
