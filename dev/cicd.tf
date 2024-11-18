@@ -128,6 +128,7 @@ resource "kubernetes_secret_v1" "private-helm-repo-chart" {
     namespace = "argocd"
     labels = {
       "argocd.argoproj.io/secret-type" = "repository"
+      "argocd-ecr-updater" = "enabled"
     }
   }
 
