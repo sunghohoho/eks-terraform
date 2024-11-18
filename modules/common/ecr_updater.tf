@@ -15,7 +15,7 @@ resource "aws_iam_role" "ecr-updater-role" {
             "Condition": {
                 "StringEquals": {
                     "${var.oidc_issuer_url}:aud": "sts.amazonaws.com",
-                    "${var.oidc_issuer_url}:sub": "system:serviceaccount:kube-system:argocd-ecr-updater"
+                    "${var.oidc_issuer_url}:sub": "system:serviceaccount:${kubernetes_namespace_v1.argocd.metadata[0].name}:argocd-ecr-updater"
                 }
             }
         }
