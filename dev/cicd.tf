@@ -118,3 +118,27 @@ resource "kubernetes_secret_v1" "private-git-repo-values" {
     url      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["helm-values"]
   }
 }
+
+# https://medium.com/@281332/argocd-access-to-aws-ecr-for-helm-oci-external-secrets-operator-c850d3461f5f
+# ArgoCD ECR Updater | https://github.com/karlderkaefer/argocd-ecr-updater
+# ecr 등록
+resource "kubernetes_secret_v1" "private-helm-repo-chart" {
+  metadata {
+    name      = "private-helm-repo-chart"
+    namespace = "argocd"
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+
+  type = "Opaque"
+
+  data = {
+    enableOCI: "true"
+    name: "private-helm-repo-chart" # can be anything
+    type: "helm"
+    url: jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]
+    username: "AWS"
+    password: "$(aws ecr get-login-password --region ap-northeast-2)"
+  }
+}
