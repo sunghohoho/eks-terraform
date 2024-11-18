@@ -244,3 +244,10 @@ Checksum valid for: kubernetes-client-api
 ```yaml
 terraform 에서 argocd applicaiton resource 사용하는 경우 권한문제
 ```
+
+14,
+```yaml
+argocd에 helm 유형의 repo를 등록하는 경우, 
+error testing repository connectivity: Get 12341.dkr.ecr.ap-northeast-2.amazonaws.com/helm-charts/cad/index.yaml": unsupported protocol scheme "" 
+와 같은 에러가 출력됨, 이는 enableOCI 옵션을 true 설정하면 된다.
+```
