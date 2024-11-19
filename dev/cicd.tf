@@ -46,32 +46,32 @@ spec:
 }
 
 # argocd application
-resource "kubectl_manifest" "argocd_app" {
-  yaml_body =  <<EOF
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: cad
-  namespace: argocd
-spec:
-  project: ${kubectl_manifest.argocd_project.name}
-  source:
-    repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
-    targetRevision: HEAD
-    path: .
-    helm:
-      valueFiles: 
-      - values.yaml
-  destination:
-    name: in-cluster
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-EOF
+# resource "kubectl_manifest" "argocd_app" {
+#   yaml_body =  <<EOF
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: cad
+#   namespace: argocd
+# spec:
+#   project: ${kubectl_manifest.argocd_project.name}
+#   source:
+#     repoURL: https://github.com/sunghohoho/cats-and-dogs-helm
+#     targetRevision: HEAD
+#     path: .
+#     helm:
+#       valueFiles: 
+#       - values.yaml
+#   destination:
+#     name: in-cluster
+#     namespace: default
+#   syncPolicy:
+#     automated:
+#       prune: true
+# EOF
 
-depends_on = [ kubectl_manifest.argocd_project ]
-}
+# depends_on = [ kubectl_manifest.argocd_project ]
+# }
 
 # https://argo-cd.readthedocs.io/en/stable/operator-manual/argocd-repositories-yaml/
 # argocd private github repo 등록
@@ -132,7 +132,7 @@ spec:
   sources:
     - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
       chart: cad
-      targetRevision: 1.0.0
+      targetRevision: 1.0.2
       helm:
         valueFiles:
         - $values/dev-values.yaml
