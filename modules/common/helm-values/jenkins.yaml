@@ -79,6 +79,36 @@ controller:
                 }
                 disabled(false)
               }
+          - script: |    
+              pipelineJob('cats-and-dogs-helm') {
+                description('Helm charts are packaged and pushed to ECR Helm OCI when the GitHub repository is updated.')
+                keepDependencies(false)
+                properties {
+                  githubProjectUrl('https://github.com/sunghohoho/cats-and-dogs-helm')
+                  pipelineTriggers {
+                    triggers {
+                      githubPush()
+                    }
+                  }
+                }
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/sunghohoho/cats-and-dogs-helm')
+                          credentials('github')  
+                        }
+                        branch('*/main') 
+                        extensions {}  
+                      }
+                    }
+                    scriptPath('Jenkinsfile')  
+                    lightweight(true)  
+                  }
+                }
+                disabled(false)
+              }
         unclassified:
           githubpluginconfig:
             configs:
