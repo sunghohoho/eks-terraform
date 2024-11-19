@@ -1,5 +1,5 @@
 # argocd cluster 등록에 사용하는 secret
-resource "kubernetes_secret_v1" "test" {
+resource "kubernetes_secret_v1" "argocd_cluster" {
   metadata {
     name      = "argocd-cluster-auth"
     namespace = "argocd"
@@ -11,7 +11,7 @@ resource "kubernetes_secret_v1" "test" {
   type = "Opaque"
 
   data = {
-    name   = "mycluster.com"
+    name   = "my-cluster"
     server = module.eks.cluster_endpoint
     config = jsonencode({
       bearerToken = module.common.argocd_sa_token
@@ -29,7 +29,7 @@ resource "kubectl_manifest" "argocd_project" {
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata: 
-  name: sample-project
+  name: my-project
   namespace: argocd
 spec:
   clusterResourceWhitelist:
@@ -118,6 +118,8 @@ resource "kubernetes_secret_v1" "private-helm-repo-chart" {
   }
 }
 
+# multi source application, $values는 github의 루트위치에서 value파일의 위치
+# ${kubectl_manifest.argocd_project.name}
 resource "kubectl_manifest" "argocd_app_multi" {
   yaml_body =  <<EOF
 apiVersion: argoproj.io/v1alpha1
@@ -126,7 +128,7 @@ metadata:
   name: cad-multi
   namespace: argocd
 spec:
-  project: default
+  project: ${kubectl_manifest.argocd_project.name}
   sources:
     - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
       chart: cad
@@ -138,7 +140,7 @@ spec:
       targetRevision: HEAD
       ref: values
   destination: 
-    name: in-cluster
+    name: "in-cluster"
     namespace: default
   syncPolicy:
     automated:
