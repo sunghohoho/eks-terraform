@@ -12,6 +12,8 @@ controller:
   #   - name: JAVA_OPTS
   #     value: "-Dhudson.model.UpdateCenter.xmlUrl=https://updates.jenkins.io/update-center.json"
   updateCenterUrl: "https://updates.jenkins.io/update-center.json"
+  jenkinsUrlProtocol: https
+  jenkinsUrl: jenkins.gguduck.com
   admin:
     password: ${server_admin_password}
   ingress:
@@ -84,7 +86,7 @@ controller:
                 description('Helm charts are packaged and pushed to ECR Helm OCI when the GitHub repository is updated.')
                 keepDependencies(false)
                 properties {
-                  githubProjectUrl('https://github.com/sunghohoho/cats-and-dogs-helm')
+                  githubProjectUrl('https://github.com/sunghohoho/cats-and-dogs-helm/')
                   pipelineTriggers {
                     triggers {
                       githubPush()
@@ -96,7 +98,7 @@ controller:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/sunghohoho/cats-and-dogs-helm')
+                          url('https://github.com/sunghohoho/cats-and-dogs-helm.git')
                           credentials('github')  
                         }
                         branch('*/main') 
