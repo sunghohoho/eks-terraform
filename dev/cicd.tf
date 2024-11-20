@@ -132,7 +132,7 @@ spec:
   sources:
     - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
       chart: cad
-      targetRevision: 1.0.2
+      targetRevision: latest
       helm:
         valueFiles:
         - $values/dev-values.yaml
