@@ -257,3 +257,4 @@ error testing repository connectivity: Get 12341.dkr.ecr.ap-northeast-2.amazonaw
 Failed to load target state: failed to generate manifest for source 1 of 2: rpc error: code = Unknown desc = `helm registry login 11.dkr.ecr.ap-northeast-2.amazonaws.com/helm-charts/cad --username ****** --password ****** ecr get-login-password --region ap-northeast-2)` failed exit status 1: WARNING: Using --password ****** the CLI is insecure. Use --password-stdin. Error: login attempt to 211.dkr.ecr.ap-northeast-2.amazonaws.com/v2/ failed with status: 400 Bad Request
 ```
 의 경우에는 bad request로 ecr updater에 irsa가 잘못박혀있어서 에러발생
+
