@@ -31,10 +31,83 @@ controller:
   - github-branch-source:1807.v50351eb_7dd13
   - job-dsl:1.89
   - pipeline-utility-steps:2.17.0
+  - pipeline-stage-view:2.34
   - dark-theme:479.v661b_1b_911c01
+  - blueocean:1.27.16
+  - view-job-filters:392.v2c0a_4dd46909
+  
   JCasC:
     configScripts:
       jenkins-casc-configs: |
+        jenkins:
+          views:
+          - all:
+              name: "all"
+          - list:
+              name: "Last Aborted"
+              recurse: true
+              columns:
+              - "status"
+              - "weather"
+              - "jobName"
+              - "lastSuccess"
+              - "lastFailure"
+              - "lastDuration"
+              - "buildButton"
+              - "favoriteColumn"
+              jobFilters:
+              - jobTypeFilter:
+                  includeExcludeTypeString: "includeMatched"
+                  jobType: "org.jenkinsci.plugins.workflow.job.WorkflowJob$DescriptorImpl@34d20aca"
+              - mostRecentJobsFilter:
+                  checkStartTime: false
+                  maxToInclude: 0
+              - jobStatusFilter:
+                  aborted: true
+                  disabled: false
+                  failed: false
+                  includeExcludeTypeString: "includeMatched"
+                  stable: false
+                  unstable: false
+          - list:
+              name: "Last Failed"
+              recurse: true
+              columns:
+              - "status"
+              - "weather"
+              - "jobName"
+              - "lastSuccess"
+              - "lastFailure"
+              - "lastDuration"
+              - "buildButton"
+              - "favoriteColumn"
+              jobFilters:
+              - jobTypeFilter:
+                  includeExcludeTypeString: "includeMatched"
+                  jobType: "org.jenkinsci.plugins.workflow.job.WorkflowJob$DescriptorImpl@34d20aca"
+              - mostRecentJobsFilter:
+                  checkStartTime: false
+                  maxToInclude: 0
+              - jobStatusFilter:
+                  aborted: false
+                  disabled: false
+                  failed: true
+                  includeExcludeTypeString: "includeMatched"
+                  stable: false
+                  unstable: false
+          - list:
+              name: "cad"
+              recurse: true
+              columns:
+              - "status"
+              - "weather"
+              - "jobName"
+              - "lastSuccess"
+              - "lastFailure"
+              - "lastDuration"
+              - "buildButton"
+              - "favoriteColumn"
+              includeRegex: "cad/"
         credentials:
           system:
             domainCredentials:
