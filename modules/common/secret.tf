@@ -10,6 +10,7 @@ output "secrets" {
   value = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["jenkins"]["password"]
 }
 
+# secrets store
 resource "helm_release" "secrets-store-csi-driver" {
   chart = "secrets-store-csi-driver"
   name = "secrets-store-csi-driver"

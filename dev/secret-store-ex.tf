@@ -38,39 +38,39 @@ resource "kubernetes_service_account_v1" "secrets-sa" {
 }
 
 # examle
-resource "kubectl_manifest" "test-app" {
-  yaml_body = <<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: nginx
-  name: nginx
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      serviceAccountName: ${kubernetes_service_account_v1.secrets-sa.metadata[0].name}
-      containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: secret
-          mountPath: /mnt
-      volumes:
-      - name: secret
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true
-          volumeAttributes:
-            secretProviderClass: abcd
-  EOF
-}
+# resource "kubectl_manifest" "test-app" {
+#   yaml_body = <<EOF
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   labels:
+#     app: nginx
+#   name: nginx
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: nginx
+#   template:
+#     metadata:
+#       labels:
+#         app: nginx
+#     spec:
+#       serviceAccountName: secrets-sa
+#       containers:
+#       - name: nginx
+#         image: nginx
+#         ports:
+#         - containerPort: 80
+#         volumeMounts:
+#         - name: secret
+#           mountPath: /mnt
+#       volumes:
+#       - name: secret
+#         csi:
+#           driver: secrets-store.csi.k8s.io
+#           readOnly: true
+#           volumeAttributes:
+#             secretProviderClass: myeks-secrets-class
+#   EOF
+# }
