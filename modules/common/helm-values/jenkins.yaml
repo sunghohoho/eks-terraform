@@ -205,6 +205,18 @@ agent:
           ttyEnabled: true
           privileged: true
           command: /busybox/cat
+        - name: yq
+          image: mikefarah/yq:4.13.0
+          ttyEnabled: true
+          privileged: true
+          command: sleep
+          args: 99999999 
+        - name: git
+          image: alpine/git:v2.45.2
+          ttyEnabled: true
+          privileged: true
+          command: sleep
+          args: 99999999 
     helm: |
       - name: helm
         namespace: jenkins
