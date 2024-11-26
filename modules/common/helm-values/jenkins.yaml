@@ -47,8 +47,8 @@ controller:
               name: "Last Aborted"
               recurse: true
               columns:
-              - "status"
               - "weather"
+              - "status"
               - "jobName"
               - "lastSuccess"
               - "lastFailure"
@@ -107,7 +107,7 @@ controller:
               - "lastDuration"
               - "buildButton"
               - "favoriteColumn"
-              includeRegex: "cad/"
+              includeRegex: "cat/"
         credentials:
           system:
             domainCredentials:
@@ -205,12 +205,6 @@ agent:
           ttyEnabled: true
           privileged: true
           command: /busybox/cat
-        - name: yq
-          image: mikefarah/yq:4.13.0
-          ttyEnabled: true
-          privileged: true
-          command: sleep
-          args: 99999999 
         - name: git
           image: alpine/git:v2.45.2
           ttyEnabled: true
