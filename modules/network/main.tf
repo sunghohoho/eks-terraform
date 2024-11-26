@@ -93,7 +93,7 @@ resource "aws_route_table" "private" {
     "Name" = format(
     "${var.project}-pri-%s-rt",
     substr(var.azs[count.index], -1, 1)
-    )
+    ),
   }
 }
 
@@ -105,7 +105,7 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private[count.index].id
 }
 
-# nat에 부여할 eip 생성
+# # nat에 부여할 eip 생성
 # resource "aws_eip" "this" {
 #   tags = {
 #     "Name" = "${var.project}-eip"

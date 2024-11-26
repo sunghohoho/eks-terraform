@@ -7,6 +7,7 @@ module "eks" {
 	eks_version = local.eks_version
 	vpc_id = module.vpc.vpc_id
 	subnets = module.vpc.public_subnet_ids
+	fargate_subnet = module.vpc.private_subnet_ids
 	endpoint_private_access = true
 	endpoint_public_access = true
 	public_access_cidrs = local.allow_ip

@@ -101,3 +101,20 @@ variable "enable_alb" {
 variable "vpcId" {
   type = string
 }
+
+variable "fargate_namespaces" {
+  type = list(string)
+  default = ["kube-system"]
+}
+
+variable "fargate_subnet" {
+  type = list(string)
+  default = []
+}
+
+variable "fargate_label" {
+  type = map(string)
+  default = {
+    "k8s-app"= "kube-dns"
+  }
+}
