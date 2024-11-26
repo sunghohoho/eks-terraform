@@ -35,6 +35,7 @@ resource "helm_release" "secrets-store-csi-driver-provider-aws" {
   version = "0.3.8"
 }
 
+# 해당 provider에 매칭되는 secretObjects의 data 값이 변경되는 경우 reload에 의해 pod가 재생성됩니다. (reload는 아직 미구현)
 resource "kubectl_manifest" "aws-secret-provider-class" {
   yaml_body =  <<EOF
 apiVersion: secrets-store.csi.x-k8s.io/v1

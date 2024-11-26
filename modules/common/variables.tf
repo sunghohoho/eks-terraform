@@ -72,6 +72,6 @@ variable "nexus-chart-version" {
 
 variable "kubecost-chart-version" {
   type = string
-  default = "2.4"
+  default = "2.3.3"
 }
 

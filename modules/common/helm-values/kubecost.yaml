@@ -1,3 +1,13 @@
+global:
+  grafana:
+    enabled: false
+    proxy: false
+
+networkCosts:
+  image:
+    repository: public.ecr.aws/kubecost/kubecost-network-costs
+    tag: v0.17.6
+
 ingress:
   enabled: true
   className: alb
@@ -11,5 +21,32 @@ ingress:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'
   hosts: 
-    - kubecost.gguduck.com
-  
+  - kubecost.gguduck.com
+
+serviceMonitor:
+  enabled: true
+
+kubecostFrontend:
+  image: public.ecr.aws/kubecost/frontend
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  ipv6:
+    enabled: false
+
+kubecostModel:
+  image: public.ecr.aws/kubecost/cost-model
+
+forecasting:
+  fullImageName: public.ecr.aws/kubecost/kubecost-modeling:v0.1.18
+
+clusterController:
+  image:
+    repository: public.ecr.aws/kubecost/cluster-controller
+
+reporting:
+  productAnalytics: false

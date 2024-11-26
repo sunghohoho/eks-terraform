@@ -4,6 +4,38 @@ resource "kubernetes_namespace_v1" "kubecost" {
   }
 }
 
+resource "kubernetes_service_account_v1" "kubecost" {
+  metadata {
+    name = "kubecost"
+    namespace = kubernetes_namespace_v1.kubecost.metadata[0].name
+  }
+}
+
+resource "aws_iam_role" "kubecost-role" {
+  name_prefix = substr("${var.cluster_name}-kubecost-kubecost-role", 0,37)
+  managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+  assume_role_policy = <<POLICY
+{
+   "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "${var.oidc_provider_arn}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "${var.oidc_issuer_url}:aud": "sts.amazonaws.com",
+                    "${var.oidc_issuer_url}:sub": "system:serviceaccount:kubecost:kubecost"
+                }
+            }
+        }
+    ]
+}
+POLICY
+}
+
 resource "helm_release" "kubecost" {
   chart = "cost-analyzer"
   name = "kubecost"
@@ -16,4 +48,11 @@ resource "helm_release" "kubecost" {
       cert_arn = var.acm_arn
     })
   ]
+  depends_on = [ 
+    kubernetes_namespace_v1.kubecost,
+    kubernetes_service_account_v1.kubecost
+  ]
 }
+
+      # kubecost-sa = kubernetes_service_account_v1.kubecost.metadata[0].name
+      # kubecost-role = aws_iam_role.kubecost-role.arn
