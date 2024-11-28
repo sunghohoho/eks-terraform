@@ -1,0 +1,23 @@
+# production: true
+
+auth:
+  adminUser: ${adminUser}
+  adminPassword: ${initialAdminPassword}
+
+# ingress:
+#   enabled: true
+#   ingressClassName: alb
+#   hostname: ${hostname}
+#   annotations:
+#       alb.ingress.kubernetes.io/load-balancer-name: keycloak
+#       alb.ingress.kubernetes.io/scheme: internet-facing
+#       alb.ingress.kubernetes.io/target-type: ip
+#       alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+#       external-dns.alpha.kubernetes.io/hostname: sso.gguduck.com
+
+postgresql:
+  auth:
+    password: ${postgresPassword}
+
+logging:
+  level: DEBUG
