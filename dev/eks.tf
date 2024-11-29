@@ -17,8 +17,8 @@ module "eks" {
 	nodegroup_type = ["t3.medium"]
 	nodegroup_subnets = module.vpc.public_subnet_ids
 	nodegroup_min = 3
-	nodegroup_max = 6
-	nodegroup_des = 3
+	nodegroup_max = 9
+	nodegroup_des = 6
 	is_pdb_ignore = true
 	vpcId = module.vpc.vpc_id
 
