@@ -25,10 +25,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.12.1"
     }
-    # argocd = {
-    #   source  = "jojand/argocd"
-    #   version = ">=2.3.2"
-    # }
+    keycloak = {
+      source = "mrparkers/keycloak"
+      version = "4.4.0"
+    }
   }
 
   # tf state를 보관할 백엔드 구성
@@ -69,6 +69,13 @@ provider "helm" {
     token                  = data.aws_eks_cluster_auth.this.token
   }
   debug = true
+}
+
+provider "keycloak" {
+    client_id     = "admin-cli"
+    username      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["username"]
+    password      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["password"]
+    url           = "https://sso.gguduck.com"
 }
 
 # # https://github.com/argoproj-labs/terraform-provider-argocd/blob/main/examples/provider/provider.tf
