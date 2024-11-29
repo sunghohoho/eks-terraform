@@ -93,11 +93,6 @@ variable "alb_controller_chart_version" {
   default = "1.8.4"
 }
 
-variable "nginx_controller_chart_version" {
-  type = string
-  default = "4.11.1"
-}
-
 variable "enable_alb" {
   type = bool
   default = true

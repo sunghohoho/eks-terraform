@@ -75,3 +75,7 @@ variable "kubecost-chart-version" {
   default = "2.3.3"
 }
 
+variable "nginx_controller_chart_version" {
+  type = string
+  default = "4.11.1"
+}

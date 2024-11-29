@@ -4,16 +4,33 @@ auth:
   adminUser: ${adminUser}
   adminPassword: ${initialAdminPassword}
 
-# ingress:
-#   enabled: true
-#   ingressClassName: alb
-#   hostname: ${hostname}
-#   annotations:
-#       alb.ingress.kubernetes.io/load-balancer-name: keycloak
-#       alb.ingress.kubernetes.io/scheme: internet-facing
-#       alb.ingress.kubernetes.io/target-type: ip
-#       alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-#       external-dns.alpha.kubernetes.io/hostname: sso.gguduck.com
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  pathType: ImplementationSpecific
+  apiVersion: ""
+  hostname: ${hostname}
+  path: /
+  servicePort: http
+  annotations:
+       ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+  labels: {}
+  tls: true
+  selfSigned: false
+  extraHosts: []
+  extraPaths: []
+  extraTls: []
+  # ingressClassName: alb
+  # hostname: ${hostname}
+  # annotations:
+  #     alb.ingress.kubernetes.io/load-balancer-name: keycloak
+  #     alb.ingress.kubernetes.io/scheme: internet-facing
+  #     alb.ingress.kubernetes.io/target-type: ip
+  #     alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+  #     alb.ingress.kubernetes.io/backend-protocol: HTTPS
+  #     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":80}, {"HTTPS":443}]'
+  #     alb.ingress.kubernetes.io/ssl-redirect: '443'
+  #     external-dns.alpha.kubernetes.io/hostname: sso.gguduck.com
 
 postgresql:
   auth:
