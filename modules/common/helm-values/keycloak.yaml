@@ -20,17 +20,6 @@ ingress:
   extraHosts: []
   extraPaths: []
   extraTls: []
-  # ingressClassName: alb
-  # hostname: ${hostname}
-  # annotations:
-  #     alb.ingress.kubernetes.io/load-balancer-name: keycloak
-  #     alb.ingress.kubernetes.io/scheme: internet-facing
-  #     alb.ingress.kubernetes.io/target-type: ip
-  #     alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-  #     alb.ingress.kubernetes.io/backend-protocol: HTTPS
-  #     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":80}, {"HTTPS":443}]'
-  #     alb.ingress.kubernetes.io/ssl-redirect: '443'
-  #     external-dns.alpha.kubernetes.io/hostname: sso.gguduck.com
 
 postgresql:
   auth:
@@ -38,3 +27,16 @@ postgresql:
 
 logging:
   level: DEBUG
+
+# oidc:
+#   enabled: true
+#   # This should be the same as the `clientID` set in step 3 above
+#   clientID: "kubecost"
+#   # Find this in Keycloak UI by going to your Kubecost client, then clicking on "Credentials".
+#   clientSecret: "c3o6Y6TqS5vk7Ixb2O84z3gWzQDFGJXP"
+#   # The k8s secret where clientSecret will be stored
+#   secretName: "kubecost-oidc-secret"
+#   # The login endpoint for the auth server
+#   authURL: "https://kubecost.gguduck.com/realms/myrealm/protocol/openid-connect/auth?client_id=kubecost&response_type=code"
+#   # Redirect after authentication
+#   loginRedirectURL: "https://kubecost.gguduck.com/model/oidc/authorize"
