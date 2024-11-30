@@ -19,48 +19,68 @@ myeks AWS Infrastructure as Code(IaC)
 ## Terraform Folder Structure
 ```
 terraform
+.
 ├── README.md
 ├── dev
+│   ├── cicd.tf
 │   ├── data.tf
 │   ├── eks.tf
+│   ├── keycloak-argocd.tf
+│   ├── keycloak-jenkins.tf
 │   ├── local.tf
 │   ├── manifest.tf
 │   ├── network.tf
-│   └── provider.tf
+│   ├── provider.tf
+│   └── secretmanager-pod.tf
+├── modules
+│   ├── common
+│   │   ├── argocd.tf
+│   │   ├── ecr_updater.tf
+│   │   ├── external-dns.tf
+│   │   ├── fluent-bit.tf
+│   │   ├── helm-values
+│   │   │   ├── argocd.yaml
+│   │   │   ├── fluent-bit-values.yaml
+│   │   │   ├── jenkins.yaml
+│   │   │   ├── keycloak.yaml
+│   │   │   ├── kube-prometheus-stack.yaml
+│   │   │   ├── kubecost.yaml
+│   │   │   ├── kubeopsview-values.yaml
+│   │   │   ├── nexus.yaml
+│   │   │   ├── sonarqube.yaml
+│   │   │   └── traefik.yaml
+│   │   ├── jenkins.tf
+│   │   ├── keycloak.tf
+│   │   ├── kubecost.tf
+│   │   ├── kubeopsview.tf
+│   │   ├── main.tf
+│   │   ├── metric.tf
+│   │   ├── nexus.tf
+│   │   ├── nginx-controller.tf
+│   │   ├── outputs.tf
+│   │   ├── prometheus.tf
+│   │   ├── provider.tf
+│   │   ├── secret.tf
+│   │   ├── sonarqube.tf
+│   │   ├── trafik.tf
+│   │   └── variables.tf
+│   ├── eks
+│   │   ├── alb-controller.tf
+│   │   ├── eks-addon.tf
+│   │   ├── eks.tf
+│   │   ├── fargateprofile.tf
+│   │   ├── karpenter.tf
+│   │   ├── local.tf
+│   │   ├── nodegroup.tf
+│   │   ├── oidc.tf
+│   │   ├── outputs.tf
+│   │   ├── provider.tf
+│   │   └── variables.tf
+│   └── network
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+│
+├── secretsmanager_sample.yaml
 ├── error.md
-└── modules
-    ├── common
-    │   ├── argocd.tf
-    │   ├── external-dns.tf
-    │   ├── fluent-bit.tf
-    │   ├── helm-values
-    │   │   ├── argocd.yaml
-    │   │   ├── fluent-bit-values.yaml
-    │   │   ├── kube-prometheus-stack.yaml
-    │   │   ├── kubeopsview-values.yaml
-    │   │   ├── nexus.yaml
-    │   │   ├── sonarqube.yaml
-    │   │   └── traefik.yaml
-    │   ├── kubeopsview.tf
-    │   ├── main.tf
-    │   ├── metric.tf
-    │   ├── nexus.tf
-    │   ├── outputs.tf
-    │   ├── prometheus.tf
-    │   ├── sonarqube.tf
-    │   ├── trafik.tf
-    │   └── variables.tf
-    ├── eks
-    │   ├── alb-controller.tf
-    │   ├── eks-addon.tf
-    │   ├── eks.tf
-    │   ├── karpenter.tf
-    │   ├── local.tf
-    │   ├── nodegroup.tf
-    │   ├── oidc.tf
-    │   ├── outputs.tf
-    │   └── variables.tf
-    └── network
-        ├── main.tf
-        ├── outputs.tf
-        └── variables.tf
+├── max-pods-calculator.sh
