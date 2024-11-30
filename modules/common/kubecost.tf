@@ -1,3 +1,4 @@
+# prometheus 비활성화로 정상적으로 data 출력 불가
 resource "kubernetes_namespace_v1" "kubecost" {
   metadata {
     name = "kubecost"
@@ -50,7 +51,8 @@ resource "helm_release" "kubecost" {
   ]
   depends_on = [ 
     kubernetes_namespace_v1.kubecost,
-    kubernetes_service_account_v1.kubecost
+    kubernetes_service_account_v1.kubecost,
+    aws_iam_role.kubecost-role
   ]
 }
 

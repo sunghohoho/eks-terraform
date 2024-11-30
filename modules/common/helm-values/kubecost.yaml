@@ -22,9 +22,11 @@ ingress:
     alb.ingress.kubernetes.io/ssl-redirect: '443'
   hosts: 
   - kubecost.gguduck.com
+  pathType: Prefix
 
-serviceMonitor:
-  enabled: true
+# 비활성화 후 정상적으로 접근은 가능, prom 설정인지?
+# serviceMonitor:
+#   enabled: true
 
 kubecostFrontend:
   image: public.ecr.aws/kubecost/frontend
