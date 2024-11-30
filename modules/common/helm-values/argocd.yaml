@@ -5,6 +5,8 @@ controller:
 configs:
   secret:
     argocdServerAdminPassword: ${server_admin_password}
+  extra:
+    oidc.keycloak.clientSecret: lololololol
 server:
   ingress: 
     enabled: true
