@@ -11,7 +11,7 @@ resource "keycloak_realm" "realm" {
   realm             = local.project
   enabled           = true
   display_name      = local.project
-  display_name_html = "<b> 존나 어렵다 시팔 ${local.project}</b>"
+  display_name_html = "<b> 어렵다 ${local.project}</b>"
   user_managed_access = true
 
   login_theme = "base"
