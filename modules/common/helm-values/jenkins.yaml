@@ -35,7 +35,7 @@ controller:
   - dark-theme:479.v661b_1b_911c01
   - blueocean:1.27.16
   - view-job-filters:392.v2c0a_4dd46909
-  
+  - keycloak:2.3.2
   JCasC:
     configScripts:
       jenkins-casc-configs: |
