@@ -12,9 +12,9 @@ myeks AWS Infrastructure as Code(IaC)
 ## EKS 구성도
   - Cluster
   - Node (Managed NodeGroup, Karpenter)
-  - Addon (VPC CNI, Kube-Proxy, EBS CSI Driver, CoreDNS, Pod Identity)
-  - Ingress Controller (AWS LoadBalancer Controller, Traefik)
-  - Common (ArgoCD, ExternalDNS, Fluent-bit, Metric Server, Nexus, PromStack, Sonarqube)
+  - Addon (VPC CNI, Kube-Proxy, EBS CSI Driver, CoreDNS, Pod Identity, secret CSI )
+  - Ingress Controller (AWS LoadBalancer Controller, Nginx Controller)
+  - Common (ArgoCD, ExternalDNS, Fluent-bit, Metric Server, Nexus, PromStack, Sonarqube, Jenkins, Keycloak, Kubecost)
 
 ## Terraform Folder Structure
 ```
