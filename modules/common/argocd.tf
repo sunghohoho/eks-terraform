@@ -56,6 +56,7 @@ resource "helm_release" "argocd" {
 
   values = [
     templatefile("${path.module}/helm-values/argocd.yaml", {
+      hostname = "argocd${var.domain_name}"
       cert_arn = var.acm_arn
       server_admin_password = htpasswd_password.argocd.bcrypt
       argocd_sa = kubernetes_service_account_v1.argocd.metadata[0].name

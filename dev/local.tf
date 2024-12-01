@@ -7,6 +7,7 @@ locals {
     env = "dev"
     part = local.project
   }
+  dev_domain_name = "-dev.gguduck.com"
 }
 
 locals {

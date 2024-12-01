@@ -13,7 +13,7 @@ controller:
   #     value: "-Dhudson.model.UpdateCenter.xmlUrl=https://updates.jenkins.io/update-center.json"
   updateCenterUrl: "https://updates.jenkins.io/update-center.json"
   jenkinsUrlProtocol: https
-  jenkinsUrl: jenkins.gguduck.com
+  jenkinsUrl: ${hostname}
   admin:
     password: ${server_admin_password}
   ingress:
@@ -25,7 +25,7 @@ controller:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-      external-dns.alpha.kubernetes.io/hostname: jenkins.gguduck.com
+      external-dns.alpha.kubernetes.io/hostname: ${hostname}
   additionalPlugins:
   - github:1.40.0
   - github-branch-source:1807.v50351eb_7dd13

@@ -75,7 +75,8 @@ provider "keycloak" {
     client_id     = "admin-cli"
     username      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["username"]
     password      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["password"]
-    url           = "https://sso.gguduck.com"
+    # url           = "https://sso${local.domain_name}"
+    url = "https://sso${local.dev_domain_name}"
 }
 
 # # https://github.com/argoproj-labs/terraform-provider-argocd/blob/main/examples/provider/provider.tf

@@ -149,3 +149,34 @@ EOF
 
 depends_on = [ kubectl_manifest.argocd_project ]
 }
+
+resource "kubectl_manifest" "argocd_app_multi2" {
+  yaml_body =  <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cad-multi-2
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
+      chart: cad
+      targetRevision: 1.0.13
+      helm:
+        valueFiles:
+        - $values/dev-values.yaml
+    - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["helm-values"]}
+      targetRevision: HEAD
+      ref: values
+  destination: 
+    name: "in-cluster"
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+EOF
+
+depends_on = [ kubectl_manifest.argocd_project ]
+}
+

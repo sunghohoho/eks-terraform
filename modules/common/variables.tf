@@ -79,3 +79,8 @@ variable "nginx_controller_chart_version" {
   type = string
   default = "4.11.1"
 }
+
+variable "domain_name" {
+  type = string
+  default = "-dev.gguduck.com"
+}

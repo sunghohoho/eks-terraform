@@ -37,6 +37,7 @@ module "eks" {
 ################################################################################
 
 module "common" {
+	domain_name = local.dev_domain_name
 	source = "../modules/common"
 	eks_version = module.eks.cluster_version
 	cluster_name = module.eks.cluster_name

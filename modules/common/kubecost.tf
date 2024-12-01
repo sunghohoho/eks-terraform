@@ -46,6 +46,7 @@ resource "helm_release" "kubecost" {
 
   values = [
     templatefile("${path.module}/helm-values/kubecost.yaml", {
+      hostname = "kubecost${var.domain_name}"
       cert_arn = var.acm_arn
     })
   ]
