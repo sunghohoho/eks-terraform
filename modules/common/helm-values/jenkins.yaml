@@ -37,6 +37,21 @@ controller:
   - view-job-filters:392.v2c0a_4dd46909
   - keycloak:2.3.2
   JCasC:
+    securityRealm: |
+      keycloak:
+        keycloakJson: |-
+          {
+            "realm": "${realm}",
+            "auth-server-url": "https://sso-dev.gguduck.com/",
+            "ssl-required": "external",
+            "resource": "jenkins",
+            "credentials": {
+              "secret": "${keycloak_secret_key}"
+            },
+            "confidential-port": 0
+          }
+        keycloakValidate: true
+        keycloakRespectAccessTokenTimeout: true
     configScripts:
       jenkins-casc-configs: |
         jenkins:

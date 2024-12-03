@@ -51,6 +51,8 @@ resource "helm_release" "jenkins" {
       github_username = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["username"]
       github_token = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["token"]
       github_token_jenkins = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["jenkins_token"]
+      keycloak_secret_key = keycloak_openid_client.jenkins_client.client_secret
+      realm = keycloak_realm.realm.realm
     })
   ]
   depends_on = [ kubernetes_persistent_volume_claim.jenkins ]
