@@ -11,5 +11,16 @@ terraform {
       source = "loafoe/htpasswd"
       version = "1.2.1"
     }
+    keycloak = {
+      source = "mrparkers/keycloak"
+      version = "4.4.0"
+    }
   }
+}
+
+provider "keycloak" {
+    client_id     = "admin-cli"
+    username      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["username"]
+    password      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["password"]
+    url = "https://sso${var.domain_name}"
 }
