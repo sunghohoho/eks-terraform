@@ -60,7 +60,8 @@ resource "helm_release" "argocd" {
       cert_arn = var.acm_arn
       server_admin_password = htpasswd_password.argocd.bcrypt
       argocd_sa = kubernetes_service_account_v1.argocd.metadata[0].name
-      # keycloak_secret_key = keycloak_openid_client.argocd_client.client_secret
+      keycloak_secret_key = keycloak_openid_client.argocd_client.client_secret
+      realm = keycloak_realm.realm.realm
     })
   ]
 }
