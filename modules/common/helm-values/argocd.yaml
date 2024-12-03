@@ -4,17 +4,17 @@ controller:
 configs:
   secret:
     argocdServerAdminPassword: ${server_admin_password}   # master 비밀번호 구성
-  extra:
-    oidc.keycloak.clientSecret: ${keycloak_secret_key}    # keycloak 로그인을 위한 secret 정보 추가
+    extra:
+      oidc.keycloak.clientSecret: ${keycloak_secret_key}    # keycloak 로그인을 위한 secret 정보 추가
   cm:   # keycloak 설정
     annotations:
-      url: https://${hostname}
       oidc.config: |
         name: Keycloak
         issuer: https://sso-dev.gguduck.com/realms/${realm}
         clientID: argocd
         clientSecret: ${keycloak_secret_key}
         requestedScopes: ["openid", "profile", "email", "groups"]
+    url: https://${hostname}
   rbac:   # keycloak group에 argocd admin 부여
     policy.csv: |
       g, ArgoCDAdmins, role:admin

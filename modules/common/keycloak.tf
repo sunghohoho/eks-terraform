@@ -109,6 +109,7 @@ resource "keycloak_openid_group_membership_protocol_mapper" "argocd_group_member
   name = "groups"
 
   claim_name = keycloak_openid_client_scope.argocd_client_scope.name
+  full_path = false
 }
 
 resource "keycloak_openid_client_default_scopes" "argocd" {
