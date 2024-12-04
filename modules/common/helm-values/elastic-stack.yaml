@@ -1,0 +1,65 @@
+eck-elasticsearch:
+  enabled: true
+  fullnameOverride: elasticsearch
+  ## https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-users-and-roles.html
+  # auth: 
+  #   disableElasticUser: true  # sso를 사용해야하는 경우에는 디폴트 슈퍼유저 생성x
+  monitoring:
+    metrics:
+      elasticsearchRefs:
+      - name: elasticsearch
+        namespace: elastic-stack
+    logs:
+      elasticsearchRefs:
+      - name: elasticsearch
+        namespace: elastic-stack
+  # http:
+  #   disalbed: true
+  ingress:
+    enabled: true
+    # className: alb
+    # annotations:
+    #   alb.ingress.kubernetes.io/load-balancer-name: es
+    #   # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32
+    #   alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+    #   alb.ingress.kubernetes.io/scheme: internet-facing
+    #   alb.ingress.kubernetes.io/target-type: ip
+    #   external-dns.alpha.kubernetes.io/hostname: ${es_hostname}
+    #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    #   alb.ingress.kubernetes.io/ssl-redirect: '443'
+    className: nginx
+    annotations:
+      ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+      nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    pathType: Prefix
+    hosts:
+      - host: ${es_hostname}
+        path: /
+
+eck-kibana:
+  enabled: true
+  spec:
+    elasticsearchRef:
+      name: elasticsearch
+  ingress:
+    enabled: true
+    # className: alb
+    # annotations:
+    #   alb.ingress.kubernetes.io/load-balancer-name: kibana
+    #   # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32
+    #   alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+    #   alb.ingress.kubernetes.io/scheme: internet-facing
+    #   alb.ingress.kubernetes.io/target-type: ip
+    #   external-dns.alpha.kubernetes.io/hostname: ${kibana_hostname}
+    #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    #   alb.ingress.kubernetes.io/ssl-redirect: '443'
+    className: nginx
+    annotations:
+      ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+      nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    pathType: Prefix
+    hosts:
+      - host: ${kibana_hostname}
+        path: /
