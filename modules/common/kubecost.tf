@@ -59,4 +59,5 @@ resource "helm_release" "kubecost" {
 
       # kubecost-sa = kubernetes_service_account_v1.kubecost.metadata[0].name
       # kubecost-role = aws_iam_role.kubecost-role.arn
-# https://kubecost.gguduck.com/realms/myrealm/protocol/openid-connect/auth?client_id=kubecost&response_type=code
+
+
