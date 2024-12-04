@@ -61,7 +61,7 @@ resource "keycloak_group" "this" {
   name     = "ArgoCDAdmins"
 }
 
-# 그룹 멤버십 생성
+# 사용자 그룹에 추가 (alice를 ArgoCDAdmins에 추가)
 resource "keycloak_user_groups" "this" {
   realm_id   = keycloak_realm.realm.id
   user_id   = keycloak_user.this.id
