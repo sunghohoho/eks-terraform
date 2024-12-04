@@ -18,7 +18,7 @@ module "eks" {
 	nodegroup_subnets = module.vpc.public_subnet_ids
 	nodegroup_min = 3
 	nodegroup_max = 9
-	nodegroup_des = 6
+	nodegroup_des = 4
 	is_pdb_ignore = true
 	vpcId = module.vpc.vpc_id
 
@@ -47,7 +47,7 @@ module "common" {
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 	acm_arn = data.aws_acm_certificate.acm.id
 	
-	depends_on = [ module.eks ]
+	# depends_on = [ module.eks ]
 }
 
 ################################################################################
