@@ -38,9 +38,13 @@ config:
         Rule   $kubernetes['container_name'] ^(.*)$ container.$0.$TAG false
   outputs: |
     [OUTPUT]
-        Name          s3
-        Match         *
-        bucket        ${bucket_name}
-        region        ${aws_region}
-        log_key       log
-        s3_key_format /kube/$TAG[5]/$TAG[3]/$TAG[1]/%Y/%m/%d/%H/%M
+        Name           es
+        Match          *
+        Host           ${es_host}
+        Port           443
+        Suppress_Type_Name On
+        Retry_Limit    False
+        tls            On
+        tls.verify     Off
+        HTTP_User      ${es_user}
+        HTTP_Passwd    ${es_password}
