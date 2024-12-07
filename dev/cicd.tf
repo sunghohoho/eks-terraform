@@ -120,35 +120,35 @@ resource "kubernetes_secret_v1" "private-helm-repo-chart" {
 
 # multi source application, $values는 github의 루트위치에서 value파일의 위치
 # ${kubectl_manifest.argocd_project.name}
-resource "kubectl_manifest" "argocd_app_multi" {
-  yaml_body =  <<EOF
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: cad-multi
-  namespace: argocd
-spec:
-  project: ${kubectl_manifest.argocd_project.name}
-  sources:
-    - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
-      chart: cad
-      targetRevision: 1.0.13
-      helm:
-        valueFiles:
-        - $values/dev-values.yaml
-    - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["helm-values"]}
-      targetRevision: HEAD
-      ref: values
-  destination: 
-    name: "in-cluster"
-    namespace: default
-  syncPolicy:
-    automated:
-      prune: true
-EOF
+# resource "kubectl_manifest" "argocd_app_multi" {
+#   yaml_body =  <<EOF
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: cad-multi
+#   namespace: argocd
+# spec:
+#   project: ${kubectl_manifest.argocd_project.name}
+#   sources:
+#     - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["charts"]}
+#       chart: cad
+#       targetRevision: 1.0.13
+#       helm:
+#         valueFiles:
+#         - $values/dev-values.yaml
+#     - repoURL: ${jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["repo"]["helm-values"]}
+#       targetRevision: HEAD
+#       ref: values
+#   destination: 
+#     name: "in-cluster"
+#     namespace: default
+#   syncPolicy:
+#     automated:
+#       prune: true
+# EOF
 
-depends_on = [ kubectl_manifest.argocd_project ]
-}
+# depends_on = [ kubectl_manifest.argocd_project ]
+# }
 
 resource "kubectl_manifest" "argocd_app_multi2" {
   yaml_body =  <<EOF
