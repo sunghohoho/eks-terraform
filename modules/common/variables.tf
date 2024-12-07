@@ -47,7 +47,7 @@ variable "external_dns_chart_version" {
 
 variable "fluent_bit_chart_version" {
     type = string
-    default = "0.47.0"
+    default = "0.47.10"
 }
 
 variable "prometheus-grafana-chart-version" {
