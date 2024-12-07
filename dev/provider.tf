@@ -25,10 +25,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.12.1"
     }
-    # elasticstack = {
-    #   source  = "elastic/elasticstack"
-    #   version = "~>0.9"
-    # }
+    elasticstack = {
+      source  = "elastic/elasticstack"
+      version = "~>0.9"
+    }
   }
 
   # tf state를 보관할 백엔드 구성
@@ -71,13 +71,13 @@ provider "helm" {
   debug = true
 }
 
-# provider "elasticstack" {
-#   elasticsearch {
-#     username  = "elastic"
-#     password  = "changeme"
-#     endpoints = ["https://es-dev.gguduck.com"]
-#   }
-# }
+provider "elasticstack" {
+  elasticsearch {
+    username  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["username"]
+    password  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["password"]
+    endpoints = ["htts://es${var.domain_name}"]
+  }
+}
 
 # # https://github.com/argoproj-labs/terraform-provider-argocd/blob/main/examples/provider/provider.tf
 # provider "argocd" {
