@@ -9,33 +9,81 @@ serviceAccount:
 config:
   inputs: |
     [INPUT]
-        Name             tail
-        Path             /var/log/containers/*.log
-        Exclude_Path     /var/log/containers/*_kube-system_*,/var/log/containers/*_argocd_*,/var/log/containers/*_ingress-nginx_*,/var/log/containers/*_monitoring_*,/var/log/containers/*_thanos_*,/var/log/containers/*_sonarqube_*,/var/log/containers/*_kubecost_*,/var/log/containers/*_logging_*,/var/log/containers/*_nvidia_*
-        multiline.parser docker, cri
-        Tag              kube.*
-        Mem_Buf_Limit    5MB
-        Skip_Long_Lines  On
+        Name                tail     
+        Tag                 app.*
+        Path                /var/log/containers/*.log
+        Exclude_Path        /var/log/containers/*_argocd_*,/var/log/containers/*_default_*,/var/log/containers/*_k8tz_*,/var/log/containers/*_karpenter_*,/var/log/containers/*_kube-system_*,/var/log/containers/*_kubernetes-event-exporter_*,/var/log/containers/*_logging_*,/var/log/containers/*_monitoring_*,/var/log/containers/*_thanos_*,/var/log/containers/*_traefik_*,/var/log/containers/*_k8tz-*
+        Parser              cri
+        Mem_Buf_Limit       5MB
+        Skip_Long_Lines     On
+        
   filters: |
     [FILTER]
+        Name                modify
+        Match               *
+        Remove              _p
+        Remove              stream
+        Remove              logtag
+        Rename              message log
+
+    [FILTER]
         Name                kubernetes
-        Match               kube.*
+        Match               app.*
+        Kube_Tag_Prefix     app.var.log.containers.
         Merge_Log           On
         Keep_Log            Off
         K8S-Logging.Parser  On
         K8S-Logging.Exclude On
+        Annotations         Off
+        
     [FILTER]
-        Name   rewrite_tag
-        Match  kube.*
-        Rule   $kubernetes['namespace_name'] ^(.*)$ namespace.$0 false
+        Name                nest
+        Match               app.*
+        Operation           lift
+        Nested_under        kubernetes
+        Add_prefix          kubernetes.
+    
     [FILTER]
-        Name   rewrite_tag
-        Match  namespace.*
-        Rule   $kubernetes['labels']['app.kubernetes.io/name'] ^(.*)$ app.$0.$TAG false
+        Name                modify
+        Match               app.*
+        Remove              kubernetes.container_hash
+        Remove              kubernetes.container_name
+        Remove              kubernetes.docker_id
+        Remove              kubernetes.namespace_name
+        Remove              kubernetes.pod_id
+        Remove              kubernetes.pod_name
+
     [FILTER]
-        Name   rewrite_tag
-        Match  app.*
-        Rule   $kubernetes['container_name'] ^(.*)$ container.$0.$TAG false
+        Name                nest
+        Match               app.*
+        Operation           lift
+        Nested_under        kubernetes.labels
+        Add_prefix          kubernetes_labels.
+
+    [FILTER]
+        Name                modify
+        Match               app.*
+        Remove              kubernetes_labels.app.kubernetes.io/managed-by
+        Remove              kubernetes_labels.app.kubernetes.io/version
+        Remove              kubernetes_labels.helm.sh/chart
+        Remove              kubernetes_labels.pod-template-hash
+
+    [FILTER]
+        Name                nest
+        Match               app.*
+        Operation           nest
+        Wildcard            kubernetes_labels.*
+        Nest_under          kubernetes.labels
+        Remove_prefix       kubernetes_labels.
+
+    [FILTER]
+        Name                nest
+        Match               app.*
+        Operation           nest
+        Wildcard            kubernetes.*
+        Nested_under        kubernetes
+        Remove_prefix       kubernetes.
+        
   outputs: |
     [OUTPUT]
         Name           es
@@ -48,3 +96,7 @@ config:
         tls.verify     Off
         HTTP_User      ${es_user}
         HTTP_Passwd    ${es_password}
+        Index             fluentbit-logs
+        Logstash_Format   On
+        Logstash_Prefix $kubernetes['labels']['app.kubernetes.io/instance']
+
