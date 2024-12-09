@@ -15,6 +15,10 @@ terraform {
       source = "mrparkers/keycloak"
       version = "4.4.0"
     }
+    elasticstack = {
+      source  = "elastic/elasticstack"
+      version = "~>0.9"
+    }
   }
 }
 
@@ -23,4 +27,12 @@ provider "keycloak" {
     username      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["username"]
     password      = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["keycloak"]["password"]
     url = "https://sso${var.domain_name}"
+}
+
+provider "elasticstack" {
+  elasticsearch {
+    username  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["username"]
+    password  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["password"]
+    endpoints = ["htts://es${var.domain_name}"]
+  }
 }
