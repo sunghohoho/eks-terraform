@@ -75,12 +75,12 @@ provider "elasticstack" {
   elasticsearch {
     username  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["username"]
     password  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["password"]
-    endpoints = ["htts://es${local.dev_domain_name}"]
+    endpoints = ["https://es${local.dev_domain_name}"]
   }
   kibana {
     username  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["username"]
     password  = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["elasticsearch"]["password"]
-    endpoints = ["htts://kibana${local.dev_domain_name}"]
+    endpoints = ["https://kibana${local.dev_domain_name}"]
   }
 }
 
