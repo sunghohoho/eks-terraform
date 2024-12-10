@@ -34,32 +34,35 @@ config:
   ]
 }
 
-# # Kubernetes Event Exporter 로그에 적용할 ILM
-# resource "elasticstack_elasticsearch_index_lifecycle" "kubernetes_event_exporter" {
-#   name = "kubernetes-event-exporter"
+# Kubernetes Event Exporter 로그에 적용할 ILM, hot 인덱스에 1일, warm 인덱스 2일 이후 삭제
+resource "elasticstack_elasticsearch_index_lifecycle" "kubernetes-event-exporter" {
+  name = "kubernetes-event-exporter-ILM"
 
-#   hot {
-#     min_age = "0ms"
-#   }
+  hot {
+    min_age = "1d"
+  }
 
-#   delete {
-#     min_age = "3d"
-#     delete {}
-#   }
-# }
+  warm {
+    min_age = "2d"
+  }
 
-# # Kubernetes Event Exporter 로그에 적용할 인덱스 템플릿
-# resource "elasticstack_elasticsearch_index_template" "kubernetes_event_exporter" {
-#   name = "kubernetes-event-exporter"
+  delete {
+    delete {}
+  }
+}
 
-#   index_patterns = ["*-kube-events-*"]
-#   priority       = 2000
-#   template {
-#     settings = jsonencode({
-#       "index.lifecycle.name" = elasticstack_elasticsearch_index_lifecycle.kubernetes_event_exporter.name
-#     })
-#   }
-# }
+# Kubernetes Event Exporter 로그에 적용할 인덱스 템플릿
+resource "elasticstack_elasticsearch_index_template" "kubernetes_event_exporter" {
+  name = "kubernetes-event-exporter"
+
+  index_patterns = ["*-kube-events-*"]
+  priority       = 2000
+  template {
+    settings = jsonencode({
+      "index.lifecycle.name" = elasticstack_elasticsearch_index_lifecycle.kubernetes-event-exporter.name
+    })
+  }
+}
 
 resource "elasticstack_kibana_data_view" "kube-event-exporter" {
   # for_each = local.apps
