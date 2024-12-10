@@ -12,7 +12,15 @@ config:
         Name                tail     
         Tag                 app.*
         Path                /var/log/containers/*.log
-        Exclude_Path        /var/log/containers/*_argocd_*,/var/log/containers/*_default_*,/var/log/containers/*_k8tz_*,/var/log/containers/*_karpenter_*,/var/log/containers/*_kube-system_*,/var/log/containers/*_kubernetes-event-exporter_*,/var/log/containers/*_logging_*,/var/log/containers/*_monitoring_*,/var/log/containers/*_thanos_*,/var/log/containers/*_traefik_*,/var/log/containers/*_k8tz-*
+        Exclude_Path        /var/log/containers/*_kube-system_*.log,/var/log/containers/*_kubecost_*.log,/var/log/containers/*_k8tz-*.log,/var/log/containers/*_logging_*.log,/var/log/containers/*_keycloak_*.log
+        Parser              cri
+        Mem_Buf_Limit       5MB
+        Skip_Long_Lines     On
+    
+    [INPUT]
+        Name                tail
+        Tag                 ingress.*
+        Path                /var/log/containers/ingress-nginx-*.log,/var/log/containers/aws-load-balancer-*.log
         Parser              cri
         Mem_Buf_Limit       5MB
         Skip_Long_Lines     On
@@ -20,7 +28,7 @@ config:
   filters: |
     [FILTER]
         Name                modify
-        Match               *
+        Match               app.*
         Remove              _p
         Remove              stream
         Remove              logtag
@@ -35,38 +43,22 @@ config:
         K8S-Logging.Parser  On
         K8S-Logging.Exclude On
         Annotations         Off
-        
+    
     [FILTER]
         Name                nest
         Match               app.*
         Operation           lift
         Nested_under        kubernetes
-        Add_prefix          kubernetes.
-    
+        Add_prefix          kubernetes.   
+
     [FILTER]
         Name                modify
         Match               app.*
         Remove              kubernetes.container_hash
         Remove              kubernetes.container_name
         Remove              kubernetes.docker_id
-        Remove              kubernetes.namespace_name
         Remove              kubernetes.pod_id
-        Remove              kubernetes.pod_name
-
-    [FILTER]
-        Name                nest
-        Match               app.*
-        Operation           lift
-        Nested_under        kubernetes.labels
-        Add_prefix          kubernetes_labels.
-
-    [FILTER]
-        Name                modify
-        Match               app.*
-        Remove              kubernetes_labels.app.kubernetes.io/managed-by
-        Remove              kubernetes_labels.app.kubernetes.io/version
-        Remove              kubernetes_labels.helm.sh/chart
-        Remove              kubernetes_labels.pod-template-hash
+        Remove              kubernetes.pod_name  
 
     [FILTER]
         Name                nest
@@ -74,7 +66,7 @@ config:
         Operation           nest
         Wildcard            kubernetes_labels.*
         Nest_under          kubernetes.labels
-        Remove_prefix       kubernetes_labels.
+        Remove_prefix       kubernetes_labels.   
 
     [FILTER]
         Name                nest
@@ -82,12 +74,12 @@ config:
         Operation           nest
         Wildcard            kubernetes.*
         Nested_under        kubernetes
-        Remove_prefix       kubernetes.
+        Remove_prefix       kubernetes.        
         
   outputs: |
     [OUTPUT]
         Name           es
-        Match          *
+        Match          app.*
         Host           ${es_host}
         Port           443
         Suppress_Type_Name On
@@ -96,7 +88,18 @@ config:
         tls.verify     Off
         HTTP_User      ${es_user}
         HTTP_Passwd    ${es_password}
-        Index             fluentbit-logs
-        Logstash_Format   On
-        Logstash_Prefix $kubernetes['labels']['app.kubernetes.io/instance']
+        Index          fluentbit
+    
+    [OUTPUT]
+        Name           es
+        Match          ingress.*
+        Host           ${es_host}
+        Port           443
+        Suppress_Type_Name On
+        Retry_Limit    False
+        tls            On
+        tls.verify     Off
+        HTTP_User      ${es_user}
+        HTTP_Passwd    ${es_password}
+        Index          ingress
 
