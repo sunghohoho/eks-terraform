@@ -39,10 +39,6 @@ resource "elasticstack_elasticsearch_index_lifecycle" "kubernetes-event-exporter
   name = "kubernetes-event-exporter-ILM"
 
   hot {
-    min_age = "1d"
-  }
-
-  warm {
     min_age = "2d"
   }
 
@@ -55,7 +51,7 @@ resource "elasticstack_elasticsearch_index_lifecycle" "kubernetes-event-exporter
 resource "elasticstack_elasticsearch_index_template" "kubernetes_event_exporter" {
   name = "kubernetes-event-exporter"
 
-  index_patterns = ["*-kube-events-*"]
+  index_patterns = ["kube-events-*"]
   priority       = 2000
   template {
     settings = jsonencode({
