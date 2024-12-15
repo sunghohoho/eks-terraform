@@ -47,6 +47,10 @@ resource "htpasswd_password" "argocd" {
   password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["argocd"]["password"]
 }
 
+resource "htpasswd_password" "dev-user" {
+  password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["argocd"]["password"]
+}
+
 resource "helm_release" "argocd" {
   chart = "argo-cd"
   name = "argo-cd"
@@ -62,6 +66,7 @@ resource "helm_release" "argocd" {
       argocd_sa = kubernetes_service_account_v1.argocd.metadata[0].name
       keycloak_secret_key = keycloak_openid_client.argocd_client.client_secret
       realm = keycloak_realm.realm.realm
+      dev_user_password = htpasswd_password.dev-user.bcrypt
     })
   ]
 }
