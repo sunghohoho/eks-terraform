@@ -10,7 +10,7 @@ config:
   inputs: |
     [INPUT]
         Name                tail     
-        Tag                 app.*
+        Tag                 fluentbit.*
         Path                /var/log/containers/*.log
         Exclude_Path        /var/log/containers/*_kube-system_*,/var/log/containers/*_kubecost_*,/var/log/containers/*_k8tz-*,/var/log/containers/*_logging_*,/var/log/containers/*_keycloak_*,/var/log/containers/*_argocd_*,/var/log/containers/*_elastic_system_*
         Parser              cri
@@ -51,8 +51,8 @@ config:
 
     [FILTER]
         Name                kubernetes
-        Match               app.*
-        Kube_Tag_Prefix     app.var.log.containers.
+        Match               fluentbit.*
+        Kube_Tag_Prefix     fluentbit.var.log.containers.
         Merge_Log           On
         Keep_Log            Off
         K8S-Logging.Parser  On
@@ -61,14 +61,14 @@ config:
     
     [FILTER]
         Name                nest
-        Match               app.*
+        Match               fluentbit.*
         Operation           lift
         Nested_under        kubernetes
         Add_prefix          kubernetes.
         
     [FILTER]
         Name                modify
-        Match               app.*
+        Match               fluentbit.*
         REMOVE              kubernetes.pod_name
         REMOVE              kubernetes.pod_id
         REMOVE              kubernetes.host
@@ -76,17 +76,17 @@ config:
         REMOVE              kubernetes.docker_id
         REMOVE              kubernetes.container_hash
     
-    # stdout 로그는 access 태그
-    [FILTER]
-        Name                rewrite_tag
-        Match               default.*
-        Rule                $stream stdout default.access.* false
+    # # stdout 로그는 access 태그
+    # [FILTER]
+    #     Name                rewrite_tag
+    #     Match               default.*
+    #     Rule                $stream stdout default.access.* false
     
-    # stderr 로그는 error 태그
-    [FILTER]
-        Name                rewrite_tag
-        Match               default.*
-        Rule                $stream stderr default.error.* false
+    # # stderr 로그는 error 태그
+    # [FILTER]
+    #     Name                rewrite_tag
+    #     Match               default.*
+    #     Rule                $stream stderr default.error.* false
 
     [FILTER]
         Name                kubernetes
@@ -119,8 +119,8 @@ config:
         Match               default.*
         Operation           lift
         Nested_under        kubernetes.labels
-        Add_prefix          kubernetes.labels.
-
+        Add_prefix          kubernetes.labels_
+    
     [FILTER]
         Name                nest
         Match               default.*
@@ -132,7 +132,7 @@ config:
   outputs: |
     [OUTPUT]
         Name                es
-        Match               app.*
+        Match               fluentbit.*
         Host                ${es_host}
         Port                443
         Suppress_Type_Name  On
@@ -186,3 +186,16 @@ config:
         Index               default
         Trace_Error         On
 
+    # [OUTPUT]
+    #     Name                es
+    #     Match               default.error.*
+    #     Host                ${es_host}
+    #     Port                443
+    #     Suppress_Type_Name  On
+    #     Retry_Limit         False
+    #     tls                 On
+    #     tls.verify          Off
+    #     HTTP_User           ${es_user}
+    #     HTTP_Passwd         ${es_password}
+    #     Index               default.error
+    #     Trace_Error         On
