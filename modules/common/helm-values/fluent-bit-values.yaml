@@ -12,7 +12,7 @@ config:
         Name                tail     
         Tag                 app.*
         Path                /var/log/containers/*.log
-        Exclude_Path        /var/log/containers/*_kube-system_*.log,/var/log/containers/*_kubecost_*.log,/var/log/containers/*_k8tz-*.log,/var/log/containers/*_logging_*.log,/var/log/containers/*_keycloak_*.log
+        Exclude_Path        /var/log/containers/*_kube-system_*,/var/log/containers/*_kubecost_*,/var/log/containers/*_k8tz-*,/var/log/containers/*_logging_*,/var/log/containers/*_keycloak_*,/var/log/containers/*_argocd_*,/var/log/containers/*_elastic_system_*
         Parser              cri
         Mem_Buf_Limit       5MB
         Skip_Long_Lines     On
@@ -20,7 +20,23 @@ config:
     [INPUT]
         Name                tail
         Tag                 ingress.*
-        Path                /var/log/containers/ingress-nginx-*.log,/var/log/containers/aws-load-balancer-*.log
+        Path                /var/log/containers/ingress-nginx-*,/var/log/containers/aws-load-balancer-*
+        Parser              cri
+        Mem_Buf_Limit       5MB
+        Skip_Long_Lines     On
+    
+    [INPUT]
+        Name                tail
+        Tag                 cicd.*
+        Path                /var/log/containers/*_jenkins_jenkins-*,/var/log/containers/*-argocd-server-*
+        Parser              cri
+        Mem_Buf_Limit       5MB
+        Skip_Long_Lines     On
+
+    [INPUT]
+        Name                tail
+        Tag                 default.*
+        Path                /var/log/containers/*_default_*
         Parser              cri
         Mem_Buf_Limit       5MB
         Skip_Long_Lines     On
@@ -28,9 +44,8 @@ config:
   filters: |
     [FILTER]
         Name                modify
-        Match               app.*
+        Match               *
         Remove              _p
-        Remove              stream
         Remove              logtag
         Rename              message log
 
@@ -42,64 +57,132 @@ config:
         Keep_Log            Off
         K8S-Logging.Parser  On
         K8S-Logging.Exclude On
-        Annotations         Off
+        Annotations         Off 
     
     [FILTER]
         Name                nest
         Match               app.*
         Operation           lift
         Nested_under        kubernetes
-        Add_prefix          kubernetes.   
-
+        Add_prefix          kubernetes.
+        
     [FILTER]
         Name                modify
         Match               app.*
-        Remove              kubernetes.container_hash
-        Remove              kubernetes.container_name
-        Remove              kubernetes.docker_id
+        REMOVE              kubernetes.pod_name
+        REMOVE              kubernetes.pod_id
+        REMOVE              kubernetes.host
+        REMOVE              kubernetes.container_name
+        REMOVE              kubernetes.docker_id
+        REMOVE              kubernetes.container_hash
+    
+    # stdout 로그는 access 태그
+    [FILTER]
+        Name                rewrite_tag
+        Match               default.*
+        Rule                $stream stdout default.access.* false
+    
+    # stderr 로그는 error 태그
+    [FILTER]
+        Name                rewrite_tag
+        Match               default.*
+        Rule                $stream stderr default.error.* false
+
+    [FILTER]
+        Name                kubernetes
+        Match               default.*
+        Kube_Tag_Prefix     default.var.log.containers.
+        Merge_Log           On
+        Keep_Log            Off
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude On
+        Annotations         Off
+    
+    [FILTER]
+        Name                nest
+        Match               default.*
+        Operation           lift
+        Nested_under        kubernetes
+        Add_prefix          kubernetes.
+
+    [FILTER]
+        Name                modify
+        Match               default.*
+        Remove              kubernetes.namespace_name
         Remove              kubernetes.pod_id
-        Remove              kubernetes.pod_name  
+        Remove              kubernetes.docker_id
+        Remove              kubernetes.container_hash
+        Remove              kubernetes.container_image
+    
+    [FILTER]
+        Name                nest
+        Match               default.*
+        Operation           lift
+        Nested_under        kubernetes.labels
+        Add_prefix          kubernetes.labels.
 
     [FILTER]
         Name                nest
-        Match               app.*
-        Operation           nest
-        Wildcard            kubernetes_labels.*
-        Nest_under          kubernetes.labels
-        Remove_prefix       kubernetes_labels.   
-
-    [FILTER]
-        Name                nest
-        Match               app.*
+        Match               default.*
         Operation           nest
         Wildcard            kubernetes.*
-        Nested_under        kubernetes
-        Remove_prefix       kubernetes.        
-        
+        Nest_under          kubernetes
+        Remove_prefix       kubernetes.
+
   outputs: |
     [OUTPUT]
-        Name           es
-        Match          app.*
-        Host           ${es_host}
-        Port           443
-        Suppress_Type_Name On
-        Retry_Limit    False
-        tls            On
-        tls.verify     Off
-        HTTP_User      ${es_user}
-        HTTP_Passwd    ${es_password}
-        Index          fluentbit
+        Name                es
+        Match               app.*
+        Host                ${es_host}
+        Port                443
+        Suppress_Type_Name  On
+        Retry_Limit         False
+        tls                 On
+        tls.verify          Off
+        HTTP_User           ${es_user}
+        HTTP_Passwd         ${es_password}
+        Index               fluentbit
+        Trace_Error         On
     
     [OUTPUT]
-        Name           es
-        Match          ingress.*
-        Host           ${es_host}
-        Port           443
-        Suppress_Type_Name On
-        Retry_Limit    False
-        tls            On
-        tls.verify     Off
-        HTTP_User      ${es_user}
-        HTTP_Passwd    ${es_password}
-        Index          ingress
+        Name                es
+        Match               ingress.*
+        Host                ${es_host}
+        Port                443
+        Suppress_Type_Name  On
+        Retry_Limit         False
+        tls                 On
+        tls.verify          Off
+        HTTP_User           ${es_user}
+        HTTP_Passwd         ${es_password}
+        Index               ingress
+        Trace_Error         On
+
+    [OUTPUT]
+        Name                es
+        Match               cicd.*
+        Host                ${es_host}
+        Port                443
+        Suppress_Type_Name  On
+        Retry_Limit         False
+        tls                 On
+        tls.verify          Off
+        HTTP_User           ${es_user}
+        HTTP_Passwd         ${es_password}
+        Index               cicd
+        Trace_Error         On
+    
+    [OUTPUT]
+        Name                es
+        Match               default.*
+        Host                ${es_host}
+        Port                443
+        Suppress_Type_Name  On
+        Retry_Limit         False
+        tls                 On
+        tls.verify          Off
+        HTTP_User           ${es_user}
+        HTTP_Passwd         ${es_password}
+        Index               default
+        Trace_Error         On
 
