@@ -76,7 +76,7 @@ config:
         REMOVE              kubernetes.docker_id
         REMOVE              kubernetes.container_hash
     
-    # # stdout 로그는 access 태그
+    # # stdout 로그는 access 태그, nginx 이미지만 해당 ㅠㅠ
     # [FILTER]
     #     Name                rewrite_tag
     #     Match               default.*
