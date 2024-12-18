@@ -1,37 +1,75 @@
-# prometheus:
-#   ingress:
-#     enabled: true
-#     ingressClassName: alb
-#     annotations:
-#         alb.ingress.kubernetes.io/load-balancer-name: prometheus
-#         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-#         alb.ingress.kubernetes.io/scheme: internet-facing
-#         alb.ingress.kubernetes.io/target-type: ip
-#         external-dns.alpha.kubernetes.io/hostname: prom.gguduck.com
-#         # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32, 222.112.86.50/32
-#         alb.ingress.kubernetes.io/success-codes: 200,404,301,302
-#     hosts: 
-#       - prom.gguduck.com
-#     paths:
-#       - /*
+alertmanager:
+  enabled: true
+  ingress: 
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+        ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    hosts:
+      - ${alert_url}
+    paths:
+      - /*
 
-# # grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
-# # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
-# grafana:
-#   ingress:
-#     defaultDashboardsTimezone: Asia/Seoul
-#     enabled: true
-#     ingressClassName: alb
-#     annotations:
-#         alb.ingress.kubernetes.io/load-balancer-name: grafana
-#         alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-#         alb.ingress.kubernetes.io/scheme: internet-facing
-#         alb.ingress.kubernetes.io/target-type: ip
-#         external-dns.alpha.kubernetes.io/hostname: graf.gguduck.com
-#         # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32, 222.112.86.50/32
-#         # alb.ingress.kubernetes.io/success-codes: 200,404,301,302
-#     hosts: 
-#       - graf.gguduck.com
-#     paths: 
-#       - /*
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+        ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    hosts: 
+      - ${prom_url}
+    paths: 
+      - /*
+
+# grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
+# https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+grafana:
+  adminPassword: ${grafana_admin_password}
+  defaultDashboardsTimezone: Asia/Seoul
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+        ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    hosts: 
+      - ${grafana_url}
+    paths: 
+      - /*
+
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false
+    configReloaders: false
+    general: true
+    k8sContainerCpuUsageSecondsTotal: true
+    k8sContainerMemoryCache: true
+    k8sContainerMemoryRss: true
+    k8sContainerMemorySwap: true
+    k8sContainerResource: true
+    k8sContainerMemoryWorkingSetBytes: true
+    k8sPodOwner: false
+    kubeApiserverAvailability: true
+    kubeApiserverBurnrate: false
+    kubeApiserverHistogram: false
+    kubeApiserverSlos: false
+    kubeControllerManager: false
+    kubelet: true
+    kubeProxy: false
+    kubePrometheusGeneral: true
+    kubePrometheusNodeRecording: false
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeSchedulerAlerting: false
+    kubeSchedulerRecording: false
+    kubeStateMetrics: true
+    network: true
+    node: true
+    nodeExporterAlerting: false
+    nodeExporterRecording: false
+    prometheus: true
+    prometheusOperator: true
  
