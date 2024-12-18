@@ -1,5 +1,13 @@
 alertmanager:
   enabled: true
+  route:
+    receiver: infea
+  receivers:
+  - name: infra
+    slack_configs:
+      api_url: https://webhook.site/9e61a07a-1986-4b91-8df5-16225f0d1381
+      channel: "#infra"
+      send_resolved: "true"
   ingress: 
     enabled: true
     ingressClassName: nginx
@@ -8,19 +16,18 @@ alertmanager:
     hosts:
       - ${alert_url}
     paths:
-      - /*
+      - /
 
 prometheus:
-  ingress:
+  ingress: 
     enabled: true
     ingressClassName: nginx
     annotations:
         ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
-    hosts: 
+    hosts:
       - ${prom_url}
-    paths: 
-      - /*
-
+    paths:
+      - /
 # grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
 # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
@@ -42,13 +49,13 @@ defaultRules:
     alertmanager: true
     etcd: false
     configReloaders: false
-    general: true
+    general: false
     k8sContainerCpuUsageSecondsTotal: true
-    k8sContainerMemoryCache: true
-    k8sContainerMemoryRss: true
+    k8sContainerMemoryCache: false
+    k8sContainerMemoryRss: false
     k8sContainerMemorySwap: true
     k8sContainerResource: true
-    k8sContainerMemoryWorkingSetBytes: true
+    k8sContainerMemoryWorkingSetBytes: false
     k8sPodOwner: false
     kubeApiserverAvailability: true
     kubeApiserverBurnrate: false
