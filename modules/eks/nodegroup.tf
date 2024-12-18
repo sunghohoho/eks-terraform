@@ -72,7 +72,8 @@ resource "aws_eks_node_group" "this" {
   subnet_ids = var.nodegroup_subnets
   capacity_type = var.is_spot ? "SPOT" : null
   instance_types = var.nodegroup_type
-  release_version = nonsensitive(data.aws_ssm_parameter.eks_ami_release_version.value)
+  # release_version = nonsensitive(data.aws_ssm_parameter.eks_ami_release_version.value)
+  release_version = "1.30.7-20241205"
   force_update_version = var.is_pdb_ignore
 
   scaling_config {
