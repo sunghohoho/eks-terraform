@@ -2,7 +2,7 @@ eck-elasticsearch:
   enabled: true
   fullnameOverride: elasticsearch
   auth:
-    fileRealm:
+    fileRealm:        # default user 생성, 미생성 시 password 확인이 어려워, secret으로 deafault user 생성
       - secretName: ${elasticsearch-secret}
   http:
     tls:

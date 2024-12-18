@@ -16,26 +16,6 @@ ingress:
   hosts: 
   - ${hostname}
   pathType: Prefix
-  
-  # className: alb
-  # annotations:
-  #   alb.ingress.kubernetes.io/load-balancer-name: kubecost
-  #   # alb.ingress.kubernetes.io/inbound-cidrs: 211.212.235.69/28, 58.239.25.12/27, 222.110.1.253/32
-  #   alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
-  #   alb.ingress.kubernetes.io/scheme: internet-facing
-  #   alb.ingress.kubernetes.io/target-type: ip
-  #   external-dns.alpha.kubernetes.io/hostname: ${hostname}
-  #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-  #   alb.ingress.kubernetes.io/ssl-redirect: '443'
-  #   alb.ingress.kubernetes.io/auth-type: oidc
-
-  # hosts: 
-  # - ${hostname}
-  # pathType: Prefix
-
-# 비활성화 후 정상적으로 접근은 가능, prom 설정인지?
-# serviceMonitor:
-#   enabled: true
 
 kubecostFrontend:
   image: public.ecr.aws/kubecost/frontend

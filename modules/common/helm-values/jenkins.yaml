@@ -15,7 +15,7 @@ controller:
   jenkinsUrlProtocol: https
   jenkinsUrl: ${hostname}
   admin:
-    password: ${server_admin_password}
+    password: ${server_admin_password}        # 기본 비밀번호 설정
   ingress:
     enabled: true
     ingressClassName: alb
@@ -26,7 +26,7 @@ controller:
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
       external-dns.alpha.kubernetes.io/hostname: ${hostname}
-  additionalPlugins:
+  additionalPlugins:        # 기본으로 설치할 plugin 설정
   - github:1.40.0
   - github-branch-source:1807.v50351eb_7dd13
   - job-dsl:1.89
@@ -37,7 +37,7 @@ controller:
   - view-job-filters:392.v2c0a_4dd46909
   - keycloak:2.3.2
   JCasC:
-    securityRealm: |
+    securityRealm: |        # keycloak 기본 활성화 설정
       keycloak:
         keycloakJson: |-
           {
@@ -52,7 +52,7 @@ controller:
           }
         keycloakValidate: true
         keycloakRespectAccessTokenTimeout: true
-    configScripts:
+    configScripts:        # job view 설정
       jenkins-casc-configs: |
         jenkins:
           views:
@@ -124,7 +124,7 @@ controller:
               - "favoriteColumn"
               includeRegex: "cat/"
         credentials:
-          system:
+          system:        
             domainCredentials:
             - credentials:
               - usernamePassword:

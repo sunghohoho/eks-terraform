@@ -2,14 +2,6 @@ alertmanager:
   alertmanagerSpec:
     replicas: 2       # 1인 경우에는 alertmanager의 cluster stauts가 disable로 사용불가, replica를 추가해줘야 정상적으로 등록가능
   enabled: true
-  route:
-    receiver: infea
-  receivers:
-  - name: infra
-    slack_configs:
-      api_url: https://webhook.site/9e61a07a-1986-4b91-8df5-16225f0d1381
-      channel: "#infra"
-      send_resolved: "true"  
   ingress: 
     enabled: true
     ingressClassName: nginx
@@ -30,11 +22,10 @@ prometheus:
       - ${prom_url}
     paths:
       - /
-# grafana values는 hub의 depnedancy 모듈에서 확인이 필요합니다.
 # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
   adminPassword: ${grafana_admin_password}
-  defaultDashboardsTimezone: Asia/Seoul
+  defaultDashboardsTimezone: Asia/Seoul   # default 타임존 설정
   ingress:
     enabled: true
     ingressClassName: nginx
@@ -45,7 +36,7 @@ grafana:
     paths: 
       - /*
 
-defaultRules:
+defaultRules:       # 기본으로 사용할 rule 설정
   create: true
   rules:
     alertmanager: true
