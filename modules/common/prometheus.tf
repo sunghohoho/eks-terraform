@@ -52,13 +52,12 @@ module "thanos_irsa" {
       namespace_service_accounts = [
         # "thanos:thanos-bucketweb",
         # "thanos:thanos-compactor",
-        # "thanos:thanos-storegateway",
+        "monitoring:thanos-storegateway",
         "monitoring:kube-prometheus-prometheus"
       ]
     }
   }
 }
-
 
 resource "helm_release" "prometheus_grafana" {
   name = "prometheus"
@@ -74,6 +73,23 @@ resource "helm_release" "prometheus_grafana" {
       prom_url = "prom${var.domain_name}"
       alert_url = "alert${var.domain_name}"
       grafana_url = "graf${var.domain_name}"
+    })
+  ]
+}
+
+resource "helm_release" "thanos" {
+  name = "thanos"
+  namespace = kubernetes_namespace.monitoring.metadata[0].name
+  chart = "thanos"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
+  version = var.thanos-chart-version
+
+  values = [
+    templatefile("${path.module}/helm-values/thanos.yaml", {
+      cert_arn = var.acm_arn
+      alert_url = "https://alert${var.domain_name}"
+      thanos_s3 = aws_s3_bucket.thanos.id
+      thanos_role = module.thanos_irsa.iam_role_arn
     })
   ]
 }

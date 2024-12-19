@@ -1,0 +1,32 @@
+objstoreConfig: |-
+  type: s3
+  config:
+    bucket: ${thanos_s3}
+    endpoint: s3.ap-northeast-2.amazonaws.com
+query:
+  enabeld: true
+bucketweb:
+  enabled: true
+compactor:
+  enabled: true
+storegateway:
+  serviceAccount:
+    create: true
+    name: "thanos-storegateway"
+    annotations:
+        eks.amazonaws.com/role-arn: ${thanos_role}
+  enabled: true
+ruler:
+  enabled: true
+  alertmanagers:
+    - ${alert_url}
+  config: |-
+    groups:
+      - name: "metamonitoring"
+        rules:
+          - alert: "PrometheusDown"
+            expr: absent(up{prometheus="monitoring/kube-prometheus"})
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

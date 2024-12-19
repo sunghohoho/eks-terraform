@@ -84,3 +84,8 @@ variable "domain_name" {
   type = string
   default = "-dev.gguduck.com"
 }
+
+variable "thanos-chart-version" {
+  type = string
+  default = "15.9.2"
+}
