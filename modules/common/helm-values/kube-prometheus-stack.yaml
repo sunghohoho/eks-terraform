@@ -13,6 +13,21 @@ alertmanager:
       - /
 
 prometheus:
+  serviceAccount:       # bucket access를 위한 service account 구성
+    create: true
+    name: "kube-prometheus-prometheus"
+    annotations:
+        eks.amazonaws.com/role-arn: ${thanos_role}
+  prometheusSpec:
+    thanos:
+      create: true       # 타노스 사이드카 설정
+      objectStorageConfig:       # 타노스 오브젝트 설정
+        key: "objstore.yml"
+        name: ${s3_object_secret}
+  thanosService:
+    enabled: true
+  thanosServiceMonitor:
+    enabled: true
   ingress: 
     enabled: true
     ingressClassName: nginx
@@ -22,6 +37,7 @@ prometheus:
       - ${prom_url}
     paths:
       - /
+
 # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
   adminPassword: ${grafana_admin_password}
