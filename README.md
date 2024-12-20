@@ -14,24 +14,78 @@ myeks AWS Infrastructure as Code(IaC)
   - Node (Managed NodeGroup, Karpenter)
   - Addon (VPC CNI, Kube-Proxy, EBS CSI Driver, CoreDNS, Pod Identity, secret CSI )
   - Ingress Controller (AWS LoadBalancer Controller, Nginx Controller)
-  - Common (ArgoCD, ExternalDNS, Fluent-bit, Metric Server, Nexus, PromStack, Sonarqube, Jenkins, Keycloak, Kubecost)
+  - Common (ArgoCD, ExternalDNS, Fluent-bit, Metric Server, Nexus, PromStack, Sonarqube, Jenkins, Keycloak, Kubecost )
+
+# 🚀 EKS 상세 스택
+
+---
+
+## 🛠️ **General**
+- **🔗 ExternalDNS**
+  - Ingress Host와 Route53 연결
+- **🕒 k8tz**
+  - Pod Time Zone을 KST로 설정
+
+---
+
+## 📦 **CICD**
+- **📦 ArgoCD**
+  - Kubernetes Pod 배포 관리
+- **🔧 Jenkins**
+  - GitHub 소스 코드 빌드
+- **🔄 ecr_updater**
+  - ECR 토큰을 주기적으로 업데이트하여 ArgoCD에서 ECR 이미지 관리
+
+---
+
+## 📋 **Logging**
+- **📊 Elastic Stack**
+  - ElasticSearch 및 Kibana로 로그 시각화
+- **⚙️ Elastic Operator**
+  - Elastic CRD 리소스 관리
+- **📡 Fluent Bit**
+  - Container 로그 수집, 파싱 후 ElasticSearch로 전송
+
+---
+
+## 📈 **Monitoring**
+- **📊 Prometheus Stack**
+  - Prometheus CRD, Prometheus, Grafana, Alertmanager 포함
+- **🌌 Thanos**
+  - S3 Bucket 설정, Query, Ruler 관리
+
+---
+
+## 🔒 **Security**
+- **🔑 Keycloak**
+  - ArgoCD와 Jenkins의 로그인 인증 연동
+
+---
+
+## 🔍 **Quick Navigation**
+- [🛠️ General](#🛠️-general)
+- [📦 CICD](#📦-cicd)
+- [📋 Logging](#📋-logging)
+- [📈 Monitoring](#📈-monitoring)
+- [🔒 Security](#🔒-security)
 
 ## Terraform Folder Structure
 ```
 terraform
-.
-├── README.md
 ├── dev
 │   ├── cicd.tf
 │   ├── data.tf
 │   ├── eks.tf
+│   ├── elasicsearch.tf
 │   ├── keycloak-argocd.tf
-│   ├── keycloak-jenkins.tf
+│   ├── kubernetes-event.tf
 │   ├── local.tf
 │   ├── manifest.tf
 │   ├── network.tf
 │   ├── provider.tf
 │   └── secretmanager-pod.tf
+├── error.md
+├── max-pods-calculator.sh
 ├── modules
 │   ├── common
 │   │   ├── argocd.tf
@@ -40,6 +94,7 @@ terraform
 │   │   ├── fluent-bit.tf
 │   │   ├── helm-values
 │   │   │   ├── argocd.yaml
+│   │   │   ├── elastic-stack.yaml
 │   │   │   ├── fluent-bit-values.yaml
 │   │   │   ├── jenkins.yaml
 │   │   │   ├── keycloak.yaml
@@ -48,17 +103,20 @@ terraform
 │   │   │   ├── kubeopsview-values.yaml
 │   │   │   ├── nexus.yaml
 │   │   │   ├── sonarqube.yaml
+│   │   │   ├── thanos.yaml
 │   │   │   └── traefik.yaml
 │   │   ├── jenkins.tf
+│   │   ├── k8tz.tf
 │   │   ├── keycloak.tf
 │   │   ├── kubecost.tf
 │   │   ├── kubeopsview.tf
+│   │   ├── logging.tf
 │   │   ├── main.tf
 │   │   ├── metric.tf
+│   │   ├── monitoring.tf
 │   │   ├── nexus.tf
 │   │   ├── nginx-controller.tf
 │   │   ├── outputs.tf
-│   │   ├── prometheus.tf
 │   │   ├── provider.tf
 │   │   ├── secret.tf
 │   │   ├── sonarqube.tf
@@ -80,7 +138,4 @@ terraform
 │       ├── main.tf
 │       ├── outputs.tf
 │       └── variables.tf
-│
 ├── secretsmanager_sample.yaml
-├── error.md
-├── max-pods-calculator.sh
