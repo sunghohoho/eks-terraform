@@ -18,15 +18,11 @@ myeks AWS Infrastructure as Code(IaC)
 
 # 🚀 EKS 상세 스택
 
----
-
 ## 🛠️ **General**
 - **🔗 ExternalDNS**
   - Ingress Host와 Route53 연결
 - **🕒 k8tz**
   - Pod Time Zone을 KST로 설정
-
----
 
 ## 📦 **CICD**
 - **📦 ArgoCD**
@@ -36,7 +32,6 @@ myeks AWS Infrastructure as Code(IaC)
 - **🔄 ecr_updater**
   - ECR 토큰을 주기적으로 업데이트하여 ArgoCD에서 ECR 이미지 관리
 
----
 
 ## 📋 **Logging**
 - **📊 Elastic Stack**
@@ -45,8 +40,9 @@ myeks AWS Infrastructure as Code(IaC)
   - Elastic CRD 리소스 관리
 - **📡 Fluent Bit**
   - Container 로그 수집, 파싱 후 ElasticSearch로 전송
+- **v Kubernetes Event Exporter**
+  - kubernets event exporter 설정 및 Index 라이프사이클, Kibana Dataview 설정
 
----
 
 ## 📈 **Monitoring**
 - **📊 Prometheus Stack**
@@ -54,13 +50,11 @@ myeks AWS Infrastructure as Code(IaC)
 - **🌌 Thanos**
   - S3 Bucket 설정, Query, Ruler 관리
 
----
 
 ## 🔒 **Security**
 - **🔑 Keycloak**
   - ArgoCD와 Jenkins의 로그인 인증 연동
 
----
 
 ## 🔍 **Quick Navigation**
 - [🛠️ General](#🛠️-general)
