@@ -89,3 +89,7 @@ variable "thanos-chart-version" {
   type = string
   default = "15.9.2"
 }
+
+variable "region" {
+  type = string
+}
