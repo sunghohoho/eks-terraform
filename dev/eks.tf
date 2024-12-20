@@ -46,7 +46,7 @@ module "common" {
 	oidc_issuer_url = replace(module.eks.cluster_identity_oidc_issuer_arn,"https://","")
 	oidc_provider_arn = module.eks.cluster_identity_oidc_arn
 	acm_arn = data.aws_acm_certificate.acm.id
-	
+	region = data.aws_region.current
 	# depends_on = [ module.eks ]
 }
 
