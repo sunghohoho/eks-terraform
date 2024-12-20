@@ -50,13 +50,32 @@ module "thanos_irsa" {
     thanos = {
       provider_arn = "${var.oidc_provider_arn}"
       namespace_service_accounts = [
-        # "thanos:thanos-bucketweb",
-        # "thanos:thanos-compactor",
+        "monitoring:thanos-bucketweb",
+        "monitoring:thanos-compactor",
         "monitoring:thanos-storegateway",
         "monitoring:kube-prometheus-prometheus"
       ]
     }
   }
+}
+
+resource "kubernetes_secret_v1" "thanos_s3" {
+  metadata {
+    name      = "thanos-s3-obj-secret"
+    namespace = kubernetes_namespace.monitoring.metadata[0].name
+  }
+
+  data = {
+    "objstore.yml" = base64encode(<<EOT
+type: s3
+config:
+  bucket: ${aws_s3_bucket.thanos.id}
+  endpoint: "s3.ap-northeast-2.amazonaws.com"
+EOT
+    )
+  }
+
+  type = "Opaque"
 }
 
 resource "helm_release" "prometheus_grafana" {
@@ -73,10 +92,13 @@ resource "helm_release" "prometheus_grafana" {
       prom_url = "prom${var.domain_name}"
       alert_url = "alert${var.domain_name}"
       grafana_url = "graf${var.domain_name}"
+      thanos_role = module.thanos_irsa.iam_role_arn
+      s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
     })
   ]
 }
 
+# https://somaz.tistory.com/333
 resource "helm_release" "thanos" {
   name = "thanos"
   namespace = kubernetes_namespace.monitoring.metadata[0].name
@@ -90,6 +112,8 @@ resource "helm_release" "thanos" {
       alert_url = "https://alert${var.domain_name}"
       thanos_s3 = aws_s3_bucket.thanos.id
       thanos_role = module.thanos_irsa.iam_role_arn
+      s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
+      region = var.region
     })
   ]
 }
