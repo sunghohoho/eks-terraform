@@ -114,6 +114,8 @@ resource "helm_release" "thanos" {
       thanos_role = module.thanos_irsa.iam_role_arn
       s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
       region = var.region
+      thanos_url = "thanos${var.domain_name}"
+      bucket_url = "s3${var.domain_name}"
     })
   ]
 }
