@@ -66,13 +66,13 @@ resource "kubernetes_secret_v1" "thanos_s3" {
   }
 
   data = {
-    "objstore.yml" = base64encode(<<EOT
-type: s3
-config:
-  bucket: ${aws_s3_bucket.thanos.id}
-  endpoint: "s3.ap-northeast-2.amazonaws.com"
-EOT
-    )
+    "objstore.yml" = yamlencode({
+      type = "s3"
+      config = {
+        bucket   = aws_s3_bucket.thanos.bucket
+        endpoint = replace(aws_s3_bucket.thanos.bucket_regional_domain_name, "${aws_s3_bucket.thanos.bucket}.", "")
+      }
+    })
   }
 
   type = "Opaque"
@@ -110,7 +110,7 @@ resource "helm_release" "thanos" {
     templatefile("${path.module}/helm-values/thanos.yaml", {
       cert_arn = var.acm_arn
       alert_url = "https://alert${var.domain_name}"
-      thanos_s3 = aws_s3_bucket.thanos.id
+      thanos_s3 = aws_s3_bucket.thanos.bucket
       thanos_role = module.thanos_irsa.iam_role_arn
       s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
       region = var.region
