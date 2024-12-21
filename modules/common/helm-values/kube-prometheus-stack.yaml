@@ -22,8 +22,9 @@ prometheus:
     thanos:
       create: true       # 타노스 사이드카 설정
       objectStorageConfig:       # 타노스 오브젝트 설정
-        key: "objstore.yml"
-        name: ${s3_object_secret}
+        existingSecret:       # 타노스 오브젝트 시크릿 가져오기, 없으면 s3로 적재안됨, https://www.reddit.com/r/kubernetes/comments/1ajqez9/thanos_not_uploading_anything_to_object_storage/
+          key: "objstore.yml"
+          name: ${s3_object_secret}
   thanosService:
     enabled: true
   thanosServiceMonitor:
@@ -52,40 +53,33 @@ grafana:
     paths: 
       - /*
 
-defaultRules:       # 기본으로 사용할 rule 설정
+defaultRules:
   create: true
   rules:
-    alertmanager: true
+    alertmanager: false
     etcd: false
     configReloaders: false
     general: false
-    k8sContainerCpuUsageSecondsTotal: true
-    k8sContainerMemoryCache: false
-    k8sContainerMemoryRss: false
-    k8sContainerMemorySwap: true
-    k8sContainerResource: true
-    k8sContainerMemoryWorkingSetBytes: false
-    k8sPodOwner: false
-    kubeApiserverAvailability: true
+    k8s: true
+    kubeApiserverAvailability: false
     kubeApiserverBurnrate: false
     kubeApiserverHistogram: false
     kubeApiserverSlos: false
     kubeControllerManager: false
-    kubelet: true
+    kubelet: false
     kubeProxy: false
-    kubePrometheusGeneral: true
+    kubePrometheusGeneral: false
     kubePrometheusNodeRecording: false
     kubernetesApps: true
-    kubernetesResources: true
+    kubernetesResources: false
     kubernetesStorage: true
     kubernetesSystem: true
-    kubeSchedulerAlerting: false
-    kubeSchedulerRecording: false
-    kubeStateMetrics: true
-    network: true
+    kubeScheduler: false
+    kubeStateMetrics: false
+    network: false
     node: true
     nodeExporterAlerting: false
     nodeExporterRecording: false
-    prometheus: true
-    prometheusOperator: true
+    prometheus: false
+    prometheusOperator: false
  
