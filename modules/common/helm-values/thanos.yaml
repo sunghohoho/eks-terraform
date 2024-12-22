@@ -12,7 +12,7 @@ queryFrontend:
   enabled: true
   ingress:
     enabled: true
-    hostname: {thanos_url}
+    hostname: ${thanos_url}
     ingressClassName: nginx
     annotations:
         ingress.annotations.nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
