@@ -33,55 +33,55 @@ resource "kubernetes_persistent_volume_claim" "jenkins" {
 }
 
 # 내일 github-token 변수 값 변경해볼것
-resource "helm_release" "jenkins" {
-  # for_each = toset(local.env)
-  chart = "jenkins"
-  name = "jenkins"
-  repository = "https://charts.jenkins.io"
-  namespace = kubernetes_namespace.jenkins.metadata[0].name
-  # version = "5.7.5"
-  version = "5.6.1"
+# resource "helm_release" "jenkins" {
+#   # for_each = toset(local.env)
+#   chart = "jenkins"
+#   name = "jenkins"
+#   repository = "https://charts.jenkins.io"
+#   namespace = kubernetes_namespace.jenkins.metadata[0].name
+#   # version = "5.7.5"
+#   version = "5.6.1"
 
-  values = [
-    templatefile("${path.module}/helm-values/jenkins.yaml", {
-      hostname = "jenkins${var.domain_name}"
-      cert_arn = var.acm_arn
-      # jenkins_pvc = kubernetes_persistent_volume_claim.jenkins.metadata[0].name
-      server_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["jenkins"]["password"]
-      github_username = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["username"]
-      github_token = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["token"]
-      github_token_jenkins = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["jenkins_token"]
-      keycloak_secret_key = keycloak_openid_client.jenkins_client.client_secret
-      realm = keycloak_realm.realm.realm
-    })
-  ]
-  depends_on = [ kubernetes_persistent_volume_claim.jenkins ]
-}
+#   values = [
+#     templatefile("${path.module}/helm-values/jenkins.yaml", {
+#       hostname = "jenkins${var.domain_name}"
+#       cert_arn = var.acm_arn
+#       # jenkins_pvc = kubernetes_persistent_volume_claim.jenkins.metadata[0].name
+#       server_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["jenkins"]["password"]
+#       github_username = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["username"]
+#       github_token = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["token"]
+#       github_token_jenkins = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["github"]["jenkins_token"]
+#       keycloak_secret_key = keycloak_openid_client.jenkins_client.client_secret
+#       realm = keycloak_realm.realm.realm
+#     })
+#   ]
+#   depends_on = [ kubernetes_persistent_volume_claim.jenkins ]
+# }
 
-module "jenkins_pod_identity" {
-  # for_each = toset(local.env)
-  # kubernetes_namespace.jenkins[each.key].metadata[0].name
-  source  = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "1.4.1"
+# module "jenkins_pod_identity" {
+#   # for_each = toset(local.env)
+#   # kubernetes_namespace.jenkins[each.key].metadata[0].name
+#   source  = "terraform-aws-modules/eks-pod-identity/aws"
+#   version = "1.4.1"
 
-  name = "jenkins"
+#   name = "jenkins"
 
-  additional_policy_arns = {
-    AmazonEC2ContainerRegistryPowerUser = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  }
+#   additional_policy_arns = {
+#     AmazonEC2ContainerRegistryPowerUser = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+#   }
 
-  associations = {
-    (var.cluster_name) = {
-      cluster_name    = var.cluster_name
-      namespace       = kubernetes_namespace.jenkins.metadata[0].name
-      service_account = helm_release.jenkins.name
-      tags = {
-        app = helm_release.jenkins.name
-      }
-    }
-  }
-  depends_on = [ helm_release.jenkins ]
-}
+#   associations = {
+#     (var.cluster_name) = {
+#       cluster_name    = var.cluster_name
+#       namespace       = kubernetes_namespace.jenkins.metadata[0].name
+#       service_account = helm_release.jenkins.name
+#       tags = {
+#         app = helm_release.jenkins.name
+#       }
+#     }
+#   }
+#   depends_on = [ helm_release.jenkins ]
+# }
 
 # # Downloaded and validated plugin kubernetes-client-api
 # # Checksum valid for: kubernetes-client-api
