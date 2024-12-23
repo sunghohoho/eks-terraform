@@ -31,6 +31,10 @@ controller:
     use-proxy-protocol: "true"
     real-ip-header: "proxy_protocol"
     use-forwarded-headers: "true"
+  metrics:
+    enabled: true
+    serviceMonitor: 
+      enabled: true
   EOF
   ]
 }
