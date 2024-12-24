@@ -5,6 +5,8 @@ serviceAccount:
         eks.amazonaws.com/role-arn: ${fluent-bit-role}
         meta.helm.sh/release-namespace: logging
         app.kubernetes.io/managed-by: Helm
+serviceMonitor:
+    enabled: true
 
 config:
   inputs: |

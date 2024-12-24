@@ -35,6 +35,7 @@ controller:
     enabled: true
     serviceMonitor: 
       enabled: true
+
   EOF
   ]
 }

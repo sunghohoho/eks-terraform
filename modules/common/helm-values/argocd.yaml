@@ -25,6 +25,9 @@ configs:
     policy.csv: |
       g, ArgoCDAdmins, role:admin
 server:
+  metrics:
+    serviceMonitor:
+      enabled: true
   ingress: 
     enabled: true
     controller: aws

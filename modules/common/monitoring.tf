@@ -78,44 +78,44 @@ resource "kubernetes_secret_v1" "thanos_s3" {
   type = "Opaque"
 }
 
-resource "helm_release" "prometheus_grafana" {
-  name = "prometheus"
-  namespace = kubernetes_namespace.monitoring.metadata[0].name
-  chart = "kube-prometheus-stack"
-  repository = "https://prometheus-community.github.io/helm-charts"
-  version = var.prometheus-grafana-chart-version
+# resource "helm_release" "prometheus_grafana" {
+#   name = "prometheus"
+#   namespace = kubernetes_namespace.monitoring.metadata[0].name
+#   chart = "kube-prometheus-stack"
+#   repository = "https://prometheus-community.github.io/helm-charts"
+#   version = var.prometheus-grafana-chart-version
 
-  values = [
-    templatefile("${path.module}/helm-values/kube-prometheus-stack.yaml", {
-      cert_arn = var.acm_arn
-      grafana_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["argocd"]["password"]
-      prom_url = "prom${var.domain_name}"
-      alert_url = "alert${var.domain_name}"
-      grafana_url = "graf${var.domain_name}"
-      thanos_role = module.thanos_irsa.iam_role_arn
-      s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
-    })
-  ]
-}
+#   values = [
+#     templatefile("${path.module}/helm-values/kube-prometheus-stack.yaml", {
+#       cert_arn = var.acm_arn
+#       grafana_admin_password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["argocd"]["password"]
+#       prom_url = "prom${var.domain_name}"
+#       alert_url = "alert${var.domain_name}"
+#       grafana_url = "graf${var.domain_name}"
+#       thanos_role = module.thanos_irsa.iam_role_arn
+#       s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
+#     })
+#   ]
+# }
 
-# https://somaz.tistory.com/333
-resource "helm_release" "thanos" {
-  name = "thanos"
-  namespace = kubernetes_namespace.monitoring.metadata[0].name
-  chart = "thanos"
-  repository = "oci://registry-1.docker.io/bitnamicharts"
-  version = var.thanos-chart-version
+# # https://somaz.tistory.com/333
+# resource "helm_release" "thanos" {
+#   name = "thanos"
+#   namespace = kubernetes_namespace.monitoring.metadata[0].name
+#   chart = "thanos"
+#   repository = "oci://registry-1.docker.io/bitnamicharts"
+#   version = var.thanos-chart-version
 
-  values = [
-    templatefile("${path.module}/helm-values/thanos.yaml", {
-      cert_arn = var.acm_arn
-      alert_url = "https://alert${var.domain_name}"
-      thanos_s3 = aws_s3_bucket.thanos.bucket
-      thanos_role = module.thanos_irsa.iam_role_arn
-      s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
-      region = var.region
-      thanos_url = "thanos${var.domain_name}"
-      bucket_url = "s3${var.domain_name}"
-    })
-  ]
-}
+#   values = [
+#     templatefile("${path.module}/helm-values/thanos.yaml", {
+#       cert_arn = var.acm_arn
+#       alert_url = "https://alert${var.domain_name}"
+#       thanos_s3 = aws_s3_bucket.thanos.bucket
+#       thanos_role = module.thanos_irsa.iam_role_arn
+#       s3_object_secret = kubernetes_secret_v1.thanos_s3.metadata[0].name
+#       region = var.region
+#       thanos_url = "thanos${var.domain_name}"
+#       bucket_url = "s3${var.domain_name}"
+#     })
+#   ]
+# }

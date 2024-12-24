@@ -4,6 +4,9 @@ auth:
   adminUser: ${adminUser}
   adminPassword: ${initialAdminPassword}
 
+serviceMonitor:
+  enabled: true
+
 ingress:
   enabled: true
   ingressClassName: nginx
