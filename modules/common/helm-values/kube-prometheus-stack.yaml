@@ -19,6 +19,8 @@ prometheus:
     annotations:
         eks.amazonaws.com/role-arn: ${thanos_role}
   prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false    # prom은 다른 네임스페이스의 servicemonitor는 검색안함, false를 해야 검색가능
+    serviceMonitorSelectorNilUsesHelmValues: false
     thanos:
       create: true       # 타노스 사이드카 설정
       objectStorageConfig:       # 타노스 오브젝트 설정
@@ -52,6 +54,32 @@ grafana:
       - ${grafana_url}
     paths: 
       - /*
+
+kubelet:
+  enabled: true
+  serviceMonitor:
+    cAdvisor: true
+kubeControllerManager:
+  enabled: false
+coreDns:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeStateMetrics:
+  enabled: true
+nodeExporter:
+  enabled: true
+  operatingSystems:
+    darwin:
+      enabled: false
+    aix:
+      enabled: false
+kubeApiServer:
+  enabled: false
 
 defaultRules:
   create: true

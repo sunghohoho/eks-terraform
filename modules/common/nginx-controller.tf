@@ -8,6 +8,9 @@ resource "helm_release" "ingress_nginx" {
   values = [
     <<EOF
 controller:
+  podAnnotations:
+    prometheus.io/scrape: true
+    prometheus.io/port: 10254
   autoscaling:
     enabled: true
     targetCPUUtilizationPercentage: 70
@@ -35,6 +38,8 @@ controller:
     enabled: true
     serviceMonitor: 
       enabled: true
+      additionalLabels:
+        release: prometheus
 
   EOF
   ]
