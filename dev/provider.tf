@@ -84,7 +84,7 @@ provider "elasticstack" {
   }
 }
 
-# # https://github.com/argoproj-labs/terraform-provider-argocd/blob/main/examples/provider/provider.tf
+# https://github.com/argoproj-labs/terraform-provider-argocd/blob/main/examples/provider/provider.tf
 # provider "argocd" {
 #   server_addr = "argocd.gguduck.com:443"
 #   username = "admin"

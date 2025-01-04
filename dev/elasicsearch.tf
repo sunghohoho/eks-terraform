@@ -3,14 +3,14 @@
 ################################################################################
 # fluentbit view
 ################################################################################
-resource "elasticstack_kibana_data_view" "app" {
-  # for_each = local.apps
-  data_view = {
-    name            = "fluentbit-view"
-    title           = "fluentbit*"
-    time_field_name = "time"
-  }
-}
+# resource "elasticstack_kibana_data_view" "app" {
+#   # for_each = local.apps
+#   data_view = {
+#     name            = "fluentbit-view"
+#     title           = "fluentbit*"
+#     time_field_name = "time"
+#   }
+# }
 
 resource "elasticstack_elasticsearch_index_lifecycle" "app" {
   name = "app-ILM"

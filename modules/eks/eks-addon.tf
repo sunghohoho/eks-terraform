@@ -100,8 +100,6 @@ resource "aws_eks_addon" "ebs_csi_controller" {
   addon_name                  = "aws-ebs-csi-driver"
   addon_version               = data.aws_eks_addon_version.ebs_csi_version.version
   service_account_role_arn = aws_iam_role.ebs-csi.arn
-  # resolve_conflicts_on_update = "OVERWRITE"
-  # resolve_conflicts_on_create = "OVERWRITE"
 
   depends_on = [ aws_eks_node_group.this ]
 }
