@@ -51,23 +51,23 @@ resource "htpasswd_password" "dev-user" {
   password = jsondecode(data.aws_secretsmanager_secret_version.this.secret_string)["argocd"]["password"]
 }
 
-# resource "helm_release" "argocd" {
-#   chart = "argo-cd"
-#   name = "argo-cd"
-#   repository = "https://argoproj.github.io/argo-helm"
-#   namespace = kubernetes_namespace_v1.argocd.metadata[0].name
-#   version = var.argocd-chart-version
+resource "helm_release" "argocd" {
+  chart = "argo-cd"
+  name = "argo-cd"
+  repository = "https://argoproj.github.io/argo-helm"
+  namespace = kubernetes_namespace_v1.argocd.metadata[0].name
+  version = var.argocd-chart-version
 
-#   values = [
-#     templatefile("${path.module}/helm-values/argocd.yaml", {
-#       hostname = "argocd${var.domain_name}"
-#       cert_arn = var.acm_arn
-#       server_admin_password = htpasswd_password.argocd.bcrypt
-#       argocd_sa = kubernetes_service_account_v1.argocd.metadata[0].name
-#       keycloak_secret_key = keycloak_openid_client.argocd_client.client_secret
-#       realm = keycloak_realm.realm.realm
-#       dev_user_password = htpasswd_password.dev-user.bcrypt
-#     })
-#   ]
-# }
+  values = [
+    templatefile("${path.module}/helm-values/argocd.yaml", {
+      hostname = "argocd${var.domain_name}"
+      cert_arn = var.acm_arn
+      server_admin_password = htpasswd_password.argocd.bcrypt
+      argocd_sa = kubernetes_service_account_v1.argocd.metadata[0].name
+      keycloak_secret_key = keycloak_openid_client.argocd_client.client_secret
+      realm = keycloak_realm.realm.realm
+      dev_user_password = htpasswd_password.dev-user.bcrypt
+    })
+  ]
+}
 
