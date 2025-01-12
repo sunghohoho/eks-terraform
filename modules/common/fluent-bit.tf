@@ -58,7 +58,7 @@ resource "helm_release" "fluent-bit" {
       es_host = "es${var.domain_name}"
     })
   ]
-  depends_on = [ helm_release.elastic-stack ]
+  # depends_on = [ helm_release.elastic-stack ]
 
 }
 
