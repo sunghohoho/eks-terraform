@@ -17,6 +17,9 @@ ingress:
   - ${hostname}
   pathType: Prefix
 
+serviceMonitor:
+  enabled: true
+  
 kubecostFrontend:
   image: public.ecr.aws/kubecost/frontend
   resources:
