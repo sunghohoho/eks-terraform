@@ -125,3 +125,22 @@ resource "aws_ec2_tag" "eks_created_security_group_tag" {
 
 # depends_on = [ kubectl_manifest.nodeclasses ]
 # }
+
+# resource "aws_vpc" "name" {
+#   cidr_block       = "10.0.0.0/16"
+#   instance_tenancy = "default"
+
+#   tags = {
+#     Name = "main"
+#   }
+# }
+
+# resource "aws_vpc" "name2" {
+#   provider = aws.ap_northeast_1
+#   cidr_block       = "10.0.0.0/16"
+#   instance_tenancy = "default"
+
+#   tags = {
+#     Name = "main"
+#   }
+# }

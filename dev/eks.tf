@@ -18,7 +18,7 @@ module "eks" {
 	nodegroup_subnets = module.vpc.public_subnet_ids
 	nodegroup_min = 3
 	nodegroup_max = 9
-	nodegroup_des = 5
+	nodegroup_des = 3
 	is_pdb_ignore = true
 	vpcId = module.vpc.vpc_id
 

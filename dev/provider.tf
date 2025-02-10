@@ -4,6 +4,22 @@
 # 리전 설정
 provider "aws" {
   region = "ap-northeast-2"
+
+  # provider에 default_tags명시하는 경우, 전역 범위에 태그를 지정할 수 있음
+  # default_tags {
+  #   tags = local.tags
+  # }
+}
+
+# 도쿄리전 프로바이더 생성
+provider "aws" {
+  alias = "ap_northeast_1"
+
+  region = "ap-northeast-1"
+  # 해당 테라폼 모듈을 통해서 생성되는 모든 AWS 리소스에 아래의 태그 부여
+  default_tags {
+    tags = local.tags
+  }
 }
 
 terraform {
